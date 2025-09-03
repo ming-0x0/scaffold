@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package openapi;
+
+option go_package = "github.com/ming-0x0/scaffold/api/gen/go/openapi";
+
+import "gnostic/openapi/v3/annotations.proto";
+
+option (gnostic.openapi.v3.document) = {
+  info: {
+    title: "Scaffold API";
+    version: "0.0.1";
+    description: "Scaffold API";
+    license: {
+      name: "MIT License";
+      url: "https://github.com/ming-0x0/scaffold/blob/main/LICENSE";
+    }
+  }
+  servers: [
+    {
+      url: "http://localhost:8080"
+      description: "Local server"
+    }
+  ]
+  components: {
+    security_schemes: {
+      additional_properties: [
+        {
+          name: "Bearer";
+          value: {
+            security_scheme: {
+              type: "http";
+              scheme: "bearer";
+              bearer_format: "JWT";
+              description: "JWT Bearer Token";
+            }
+          }
+        }
+      ]
+    }
+  }
+};

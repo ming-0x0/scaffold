@@ -1,0 +1,63 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: Scaffold API
+    description: Scaffold API
+    license:
+        name: MIT License
+        url: https://github.com/ming-0x0/scaffold/blob/main/LICENSE
+    version: 0.0.1
+servers:
+    - url: http://localhost:8080
+      description: Local server
+paths:
+    /v1/portal/auth/login:
+        post:
+            tags:
+                - PortalAuth
+            summary: Login
+            description: Login
+            operationId: Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/portal.v1.LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/portal.v1.LoginResponse'
+components:
+    schemas:
+        portal.v1.LoginRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                password:
+                    type: string
+        portal.v1.LoginResponse:
+            type: object
+            properties:
+                token:
+                    type: string
+                permissions:
+                    type: array
+                    items:
+                        type: string
+                refresh_token:
+                    type: string
+    securitySchemes:
+        Bearer:
+            type: http
+            description: JWT Bearer Token
+            scheme: bearer
+            bearerFormat: JWT
+tags:
+    - name: PortalAuth
