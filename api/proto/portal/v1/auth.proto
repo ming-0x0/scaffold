@@ -8,28 +8,32 @@ import "google/api/annotations.proto";
 import "common/response.proto";
 import "gnostic/openapi/v3/annotations.proto";
 
+import "portal/v1/user.proto";
+import "portal/v1/permission.proto";
+
 message LoginRequest {
-    string username = 1;
-    string password = 2;
+  string username = 1;
+  string password = 2;
 }
 
 message LoginResponse {
-    option (common.response_message) = "Đăng nhập thành công";
-    string access_token = 1;
-    repeated string permissions = 2;
-    string token_id = 3;
+  option (common.response_message) = "Đăng nhập thành công";
+  string access_token = 1;
+  repeated Permission permissions = 2;
+  string token_id = 3;
+  User user = 4;
 }
 
 service PortalAuth {
-    rpc Login (LoginRequest) returns (LoginResponse) {
-        option (google.api.http) = {
-            post: "/portal/v1/auth/login"
-            body: "*"
-        };
-        option (gnostic.openapi.v3.operation) = {
-            operation_id: "Login"
-            summary: "Login"
-            description: "Login"
-        };
-    }
+  rpc Login (LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/portal/auth/login"
+      body: "*"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      operation_id: "Login"
+      summary: "Login"
+      description: "Login"
+    };
+  }
 }

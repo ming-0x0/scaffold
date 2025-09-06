@@ -25,10 +25,10 @@ var File_openapi_openapi_proto protoreflect.FileDescriptor
 
 const file_openapi_openapi_proto_rawDesc = "" +
 	"\n" +
-	"\x15openapi/openapi.proto\x12\aopenapi\x1a$gnostic/openapi/v3/annotations.protoB\xd6\x02\xbaG\xca\x01\x12j\n" +
+	"\x15openapi/openapi.proto\x12\aopenapi\x1a$gnostic/openapi/v3/annotations.protoB\xda\x02\xbaG\xce\x01\x12j\n" +
 	"\fScaffold API\x12\fScaffold API*E\n" +
-	"\vMIT License\x126https://github.com/ming-0x0/scaffold/blob/main/LICENSE2\x050.0.1\x1a%\n" +
-	"\x15http://localhost:8080\x12\fLocal server*5:3\n" +
+	"\vMIT License\x126https://github.com/ming-0x0/scaffold/blob/main/LICENSE2\x050.0.1\x1a)\n" +
+	"\x19http://localhost:8080/api\x12\fLocal server*5:3\n" +
 	"1\n" +
 	"\x06Bearer\x12'\n" +
 	"%\n" +

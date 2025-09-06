@@ -74,7 +74,7 @@ func RegisterPortalAuthHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/portal.v1.PortalAuth/Login", runtime.WithHTTPPathPattern("/portal/v1/auth/login"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/portal.v1.PortalAuth/Login", runtime.WithHTTPPathPattern("/v1/portal/auth/login"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -132,7 +132,7 @@ func RegisterPortalAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/portal.v1.PortalAuth/Login", runtime.WithHTTPPathPattern("/portal/v1/auth/login"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/portal.v1.PortalAuth/Login", runtime.WithHTTPPathPattern("/v1/portal/auth/login"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -149,7 +149,7 @@ func RegisterPortalAuthHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 }
 
 var (
-	pattern_PortalAuth_Login_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"portal", "v1", "auth", "login"}, ""))
+	pattern_PortalAuth_Login_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "portal", "auth", "login"}, ""))
 )
 
 var (

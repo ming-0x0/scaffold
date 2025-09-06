@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package portal.v1;
+
+option go_package = "github.com/ming-0x0/scaffold/api/gen/go/portal/v1";
+
+import "google/api/annotations.proto";
+import "gnostic/openapi/v3/annotations.proto";
+import "gnostic/openapi/v3/openapiv3.proto";
+
+import "portal/v1/resource.proto";
+
+message Banner {
+  int64 id = 1;
+  string name_vi = 2;
+  string name_en = 3;
+  string name_zh = 4;
+  optional string description_vi = 5;
+  optional string description_en = 6;
+  optional string description_zh = 7;
+  optional int64 position = 8;
+  // Status of the banner (1: active, 2: inactive)
+  int64 status = 9;
+  Resource resource = 10;
+  optional string link = 11;
+  optional string button_name_vi = 12;
+  optional string button_name_en = 13;
+  optional string button_name_zh = 14;
+  bool has_content = 15;
+}
+
+
+message GetListBannerRequest {
+  optional int64 page = 1;
+  optional int64 limit = 2;
+  optional string name = 3;
+  // Status of the banner (1: active, 2: inactive)
+  optional int64 status = 4;
+}
+
+message GetListBannerResponse {
+  repeated Banner banners = 1;
+  int64 total_page = 2;
+  int64 record_count = 3;
+  int64 page = 4;
+  int64 limit = 5;
+}
+
+service PortalBanner {
+  rpc GetListBanner (GetListBannerRequest) returns (GetListBannerResponse) {
+    option (google.api.http) = {
+      get: "/v1/portal/banners/list_banner"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      operation_id: "GetListBanner"
+      summary: "Get list banner"
+      description: "Get list banner"
+      security: [
+        {
+          additional_properties: [
+            {
+              name: "Bearer";
+              value: {
+                value: []
+              }
+            }
+          ]
+        }
+      ]
+    };
+  }
+}
+

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package portal.v1;
+
+option go_package = "github.com/ming-0x0/scaffold/api/gen/go/portal/v1";
+
+message Permission {
+  int64 id = 1;
+  string permission_name = 2;
+  string function_code = 3;
+}

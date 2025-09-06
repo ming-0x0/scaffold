@@ -79,6 +79,7 @@ func (s *Server) createHTTPServer(mux *runtime.ServeMux) *http.Server {
 func (s *Server) registerServices(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
 	for _, fn := range []func(context.Context, *runtime.ServeMux, *grpc.ClientConn) error{
 		portalv1.RegisterPortalAuthHandler,
+		portalv1.RegisterPortalBannerHandler,
 	} {
 		if err := fn(ctx, mux, conn); err != nil {
 			return err

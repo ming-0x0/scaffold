@@ -1,6 +1,6 @@
 package domain
 
-type RepositoryContainerInterface interface {
+type AdapterInterface interface {
 	BannerRepository() BannerRepositoryInterface
 	CategoryRepository() CategoryRepositoryInterface
 	CustomerRepository() CustomerRepositoryInterface

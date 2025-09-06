@@ -10,10 +10,10 @@ info:
         url: https://github.com/ming-0x0/scaffold/blob/main/LICENSE
     version: 0.0.1
 servers:
-    - url: http://localhost:8080
+    - url: http://localhost:8080/api
       description: Local server
 paths:
-    /portal/v1/auth/login:
+    /v1/portal/auth/login:
         post:
             tags:
                 - PortalAuth
@@ -33,8 +33,91 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/portal.v1.LoginResponse'
+    /v1/portal/banners/list_banner:
+        get:
+            tags:
+                - PortalBanner
+            summary: Get list banner
+            description: Get list banner
+            operationId: GetListBanner
+            parameters:
+                - name: page
+                  in: query
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  schema:
+                    type: string
+                - name: name
+                  in: query
+                  schema:
+                    type: string
+                - name: status
+                  in: query
+                  description: 'Status of the banner (1: active, 2: inactive)'
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/portal.v1.GetListBannerResponse'
+            security:
+                - Bearer: []
 components:
     schemas:
+        portal.v1.Banner:
+            type: object
+            properties:
+                id:
+                    type: string
+                name_vi:
+                    type: string
+                name_en:
+                    type: string
+                name_zh:
+                    type: string
+                description_vi:
+                    type: string
+                description_en:
+                    type: string
+                description_zh:
+                    type: string
+                position:
+                    type: string
+                status:
+                    type: string
+                    description: 'Status of the banner (1: active, 2: inactive)'
+                resource:
+                    $ref: '#/components/schemas/portal.v1.Resource'
+                link:
+                    type: string
+                button_name_vi:
+                    type: string
+                button_name_en:
+                    type: string
+                button_name_zh:
+                    type: string
+                has_content:
+                    type: boolean
+        portal.v1.GetListBannerResponse:
+            type: object
+            properties:
+                banners:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/portal.v1.Banner'
+                total_page:
+                    type: string
+                record_count:
+                    type: string
+                page:
+                    type: string
+                limit:
+                    type: string
         portal.v1.LoginRequest:
             type: object
             properties:
@@ -50,9 +133,49 @@ components:
                 permissions:
                     type: array
                     items:
-                        type: string
+                        $ref: '#/components/schemas/portal.v1.Permission'
                 token_id:
                     type: string
+                user:
+                    $ref: '#/components/schemas/portal.v1.User'
+        portal.v1.Permission:
+            type: object
+            properties:
+                id:
+                    type: string
+                permission_name:
+                    type: string
+                function_code:
+                    type: string
+        portal.v1.Resource:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                description:
+                    type: string
+                type:
+                    type: string
+                    description: 'Type of the resource (1: image, 2: video)'
+                url:
+                    type: string
+                youtube_id:
+                    type: string
+        portal.v1.User:
+            type: object
+            properties:
+                id:
+                    type: string
+                full_name:
+                    type: string
+                email:
+                    type: string
+                username:
+                    type: string
+                is_admin:
+                    type: boolean
     securitySchemes:
         Bearer:
             type: http
@@ -61,3 +184,4 @@ components:
             bearerFormat: JWT
 tags:
     - name: PortalAuth
+    - name: PortalBanner

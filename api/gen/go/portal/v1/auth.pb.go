@@ -79,8 +79,9 @@ func (x *LoginRequest) GetPassword() string {
 type LoginResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	Permissions   []string               `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Permissions   []*Permission          `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	TokenId       string                 `protobuf:"bytes,3,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
+	User          *User                  `protobuf:"bytes,4,opt,name=user,proto3" json:"user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -122,7 +123,7 @@ func (x *LoginResponse) GetAccessToken() string {
 	return ""
 }
 
-func (x *LoginResponse) GetPermissions() []string {
+func (x *LoginResponse) GetPermissions() []*Permission {
 	if x != nil {
 		return x.Permissions
 	}
@@ -136,21 +137,29 @@ func (x *LoginResponse) GetTokenId() string {
 	return ""
 }
 
+func (x *LoginResponse) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
 var File_portal_v1_auth_proto protoreflect.FileDescriptor
 
 const file_portal_v1_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x14portal/v1/auth.proto\x12\tportal.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x15common/response.proto\x1a$gnostic/openapi/v3/annotations.proto\"F\n" +
+	"\x14portal/v1/auth.proto\x12\tportal.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x15common/response.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x14portal/v1/user.proto\x1a\x1aportal/v1/permission.proto\"F\n" +
 	"\fLoginRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x8f\x01\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"\xcb\x01\n" +
 	"\rLoginResponse\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12 \n" +
-	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x12\x19\n" +
-	"\btoken_id\x18\x03 \x01(\tR\atokenId:\x1e\x8a\xb5\x18\x1aĐăng nhập thành công2\x82\x01\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x127\n" +
+	"\vpermissions\x18\x02 \x03(\v2\x15.portal.v1.PermissionR\vpermissions\x12\x19\n" +
+	"\btoken_id\x18\x03 \x01(\tR\atokenId\x12#\n" +
+	"\x04user\x18\x04 \x01(\v2\x0f.portal.v1.UserR\x04user:\x1e\x8a\xb5\x18\x1aĐăng nhập thành công2\x82\x01\n" +
 	"\n" +
 	"PortalAuth\x12t\n" +
-	"\x05Login\x12\x17.portal.v1.LoginRequest\x1a\x18.portal.v1.LoginResponse\"8\xbaG\x15\x12\x05Login\x1a\x05Login*\x05Login\x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/portal/v1/auth/loginB\x9b\x01\n" +
+	"\x05Login\x12\x17.portal.v1.LoginRequest\x1a\x18.portal.v1.LoginResponse\"8\xbaG\x15\x12\x05Login\x1a\x05Login*\x05Login\x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/v1/portal/auth/loginB\x9b\x01\n" +
 	"\rcom.portal.v1B\tAuthProtoP\x01Z:github.com/ming-0x0/scaffold/api/gen/go/portal/v1;portalv1\xa2\x02\x03PXX\xaa\x02\tPortal.V1\xca\x02\tPortal\\V1\xe2\x02\x15Portal\\V1\\GPBMetadata\xea\x02\n" +
 	"Portal::V1b\x06proto3"
 
@@ -170,15 +179,19 @@ var file_portal_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_portal_v1_auth_proto_goTypes = []any{
 	(*LoginRequest)(nil),  // 0: portal.v1.LoginRequest
 	(*LoginResponse)(nil), // 1: portal.v1.LoginResponse
+	(*Permission)(nil),    // 2: portal.v1.Permission
+	(*User)(nil),          // 3: portal.v1.User
 }
 var file_portal_v1_auth_proto_depIdxs = []int32{
-	0, // 0: portal.v1.PortalAuth.Login:input_type -> portal.v1.LoginRequest
-	1, // 1: portal.v1.PortalAuth.Login:output_type -> portal.v1.LoginResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: portal.v1.LoginResponse.permissions:type_name -> portal.v1.Permission
+	3, // 1: portal.v1.LoginResponse.user:type_name -> portal.v1.User
+	0, // 2: portal.v1.PortalAuth.Login:input_type -> portal.v1.LoginRequest
+	1, // 3: portal.v1.PortalAuth.Login:output_type -> portal.v1.LoginResponse
+	3, // [3:4] is the sub-list for method output_type
+	2, // [2:3] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_portal_v1_auth_proto_init() }
@@ -186,6 +199,8 @@ func file_portal_v1_auth_proto_init() {
 	if File_portal_v1_auth_proto != nil {
 		return
 	}
+	file_portal_v1_user_proto_init()
+	file_portal_v1_permission_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

@@ -6,10 +6,10 @@ import (
 	"time"
 
 	portalv1 "github.com/ming-0x0/scaffold/api/gen/go/portal/v1"
+	"github.com/ming-0x0/scaffold/internal/adapter"
+	v1 "github.com/ming-0x0/scaffold/internal/adapter/grpc/handler/portal/v1"
 	interceptorAdapter "github.com/ming-0x0/scaffold/internal/adapter/grpc/interceptor"
-	v1 "github.com/ming-0x0/scaffold/internal/adapter/grpc/portal/v1"
 	"github.com/ming-0x0/scaffold/internal/adapter/grpc/responder"
-	"github.com/ming-0x0/scaffold/internal/adapter/repository"
 	"github.com/ming-0x0/scaffold/internal/domain"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -25,12 +25,12 @@ type Config struct {
 }
 
 type Server struct {
-	config              Config
-	server              *grpc.Server
-	repositoryContainer domain.RepositoryContainerInterface
-	interceptor         interceptorAdapter.InterceptorInterface
-	errorResponder      responder.ErrorResponderInterface
-	logger              *logrus.Logger
+	config         Config
+	server         *grpc.Server
+	adapter        domain.AdapterInterface
+	interceptor    interceptorAdapter.InterceptorInterface
+	errorResponder responder.ErrorResponderInterface
+	logger         *logrus.Logger
 }
 
 func New(
@@ -39,11 +39,11 @@ func New(
 	logger *logrus.Logger,
 ) *Server {
 	s := &Server{
-		config:              cfg,
-		repositoryContainer: repository.NewRepositoryContainer(db, logger),
-		interceptor:         interceptorAdapter.New(),
-		errorResponder:      responder.NewErrorResponder(),
-		logger:              logger,
+		config:         cfg,
+		adapter:        adapter.New(db, logger),
+		interceptor:    interceptorAdapter.New(),
+		errorResponder: responder.NewErrorResponder(),
+		logger:         logger,
 	}
 
 	serverOpts := []grpc.ServerOption{
@@ -58,16 +58,24 @@ func New(
 	healthServer := health.NewServer()
 	grpc_health_v1.RegisterHealthServer(s.server, healthServer)
 
-	authHandler := v1.NewAuthHandler(
-		s.repositoryContainer.UserRepository(),
-		s.errorResponder,
-		s.logger,
-	)
-	portalv1.RegisterPortalAuthServer(s.server, authHandler)
+	s.registerHandlers()
 
 	reflection.Register(s.server)
 
 	return s
+}
+
+func (s *Server) registerHandlers() {
+	v1Handler := v1.New(s.adapter, s.errorResponder, s.logger)
+
+	registers := []func(){
+		func() { portalv1.RegisterPortalAuthServer(s.server, v1.NewAuthHandler(v1Handler)) },
+		func() { portalv1.RegisterPortalBannerServer(s.server, v1.NewBannerHandler(v1Handler)) },
+	}
+
+	for _, register := range registers {
+		register()
+	}
 }
 
 func (s *Server) Run(ctx context.Context) error {

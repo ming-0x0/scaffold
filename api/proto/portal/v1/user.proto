@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package portal.v1;
+
+option go_package = "github.com/ming-0x0/scaffold/api/gen/go/portal/v1";
+
+message User {
+  int64 id = 1;
+  string full_name = 2;
+  string email = 3;
+  string username = 4;
+  bool is_admin = 5;
+}

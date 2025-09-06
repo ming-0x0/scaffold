@@ -52,12 +52,8 @@ func (b *Banner) TableName() string {
 
 func (b *Banner) Validate() error {
 	err := validation.ValidateStruct(b,
-		validation.Field(&b.NameVi, validation.Required),
-		validation.Field(&b.NameEn, validation.Required),
-		validation.Field(&b.NameZh, validation.Required),
 		validation.Field(&b.Status, validation.Required, validation.In(BannerStatusActive, BannerStatusInactive)),
 		validation.Field(&b.ResourceID, validation.Required),
-		validation.Field(&b.HasContent, validation.Required),
 	)
 	if err != nil {
 		return domainerror.Wrap(domainerror.InvalidArgument, err)
