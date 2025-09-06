@@ -8,7 +8,7 @@ import (
 	portalv1 "github.com/ming-0x0/scaffold/api/gen/go/portal/v1"
 	v1 "github.com/ming-0x0/scaffold/internal/adapter/grpc/portal/v1"
 	"github.com/ming-0x0/scaffold/internal/adapter/grpc/responder"
-	"github.com/ming-0x0/scaffold/internal/infra/repository"
+	"github.com/ming-0x0/scaffold/internal/domain"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -29,7 +29,7 @@ type Server struct {
 
 func New(
 	cfg Config,
-	repositoryContainer repository.RepositoryContainerInterface,
+	repositoryContainer domain.RepositoryContainerInterface,
 	logger *logrus.Logger,
 ) *Server {
 	s := &Server{

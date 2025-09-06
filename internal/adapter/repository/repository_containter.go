@@ -2,7 +2,6 @@ package repository
 
 import (
 	"github.com/ming-0x0/scaffold/internal/domain"
-	"github.com/ming-0x0/scaffold/internal/infra/repository"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -12,7 +11,7 @@ type RepositoryContainer struct {
 	logger *logrus.Logger
 }
 
-var _ repository.RepositoryContainerInterface = (*RepositoryContainer)(nil)
+var _ domain.RepositoryContainerInterface = (*RepositoryContainer)(nil)
 
 func NewRepositoryContainer(
 	db *gorm.DB,
