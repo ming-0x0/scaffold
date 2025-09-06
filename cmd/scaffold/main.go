@@ -9,7 +9,6 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/ming-0x0/scaffold/internal/adapter/repository"
 	"github.com/ming-0x0/scaffold/internal/infra/db"
 	"github.com/ming-0x0/scaffold/internal/infra/gateway"
 	"github.com/ming-0x0/scaffold/internal/infra/grpc"
@@ -33,14 +32,12 @@ func main() {
 	}
 	defer db.CloseDB(gormDB, logger)
 
-	repositoryContainer := repository.NewRepositoryContainer(gormDB, logger)
-
 	grpcServer := grpc.New(
 		grpc.Config{
 			Port:            os.Getenv("GRPC_PORT"),
 			ShutdownTimeout: 5 * time.Second,
 		},
-		repositoryContainer,
+		gormDB,
 		logger,
 	)
 

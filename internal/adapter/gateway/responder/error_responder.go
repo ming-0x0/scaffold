@@ -16,7 +16,7 @@ type ErrorWrapper struct {
 }
 
 type ErrorResponderInterface interface {
-	ErrorModifier(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error)
+	RespondError(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error)
 }
 
 type ErrorResponder struct{}
@@ -25,7 +25,7 @@ func NewErrorResponder() *ErrorResponder {
 	return &ErrorResponder{}
 }
 
-func (e *ErrorResponder) ErrorModifier(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
+func (e *ErrorResponder) RespondError(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
 	st := status.Convert(err)
 	httpCode := grpcCodeToHTTPCode(st.Code())
 

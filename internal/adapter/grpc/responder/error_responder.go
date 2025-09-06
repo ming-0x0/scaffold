@@ -3,7 +3,7 @@ package responder
 import (
 	"errors"
 
-	"github.com/ming-0x0/scaffold/pkg/domainerror"
+	"github.com/ming-0x0/scaffold/internal/shared/domainerror"
 )
 
 type ErrorResponderInterface interface {
@@ -40,5 +40,6 @@ func (e *ErrorResponder) RespondCode(errCode domainerror.ErrorCode, msg string, 
 	if err == nil {
 		return domainerror.WrapMsg(errCode, msg, errors.New(msg)).GRPCStatus()
 	}
+
 	return domainerror.WrapMsg(errCode, msg, err).GRPCStatus()
 }

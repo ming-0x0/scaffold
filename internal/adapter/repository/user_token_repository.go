@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/ming-0x0/scaffold/internal/domain"
-	"github.com/ming-0x0/scaffold/pkg/repository"
+	"github.com/ming-0x0/scaffold/internal/shared/repository"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )

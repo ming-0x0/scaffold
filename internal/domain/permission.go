@@ -2,8 +2,8 @@ package domain
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/ming-0x0/scaffold/pkg/domainerror"
-	"github.com/ming-0x0/scaffold/pkg/repository"
+	"github.com/ming-0x0/scaffold/internal/shared/domainerror"
+	"github.com/ming-0x0/scaffold/internal/shared/repository"
 )
 
 // PermissionsTableName TableName

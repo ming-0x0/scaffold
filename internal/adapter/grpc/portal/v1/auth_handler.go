@@ -7,23 +7,27 @@ import (
 	portalv1 "github.com/ming-0x0/scaffold/api/gen/go/portal/v1"
 	"github.com/ming-0x0/scaffold/internal/adapter/grpc/responder"
 	"github.com/ming-0x0/scaffold/internal/domain"
-	"github.com/ming-0x0/scaffold/pkg/domainerror"
+	"github.com/ming-0x0/scaffold/internal/shared/domainerror"
 	"github.com/ming-0x0/scaffold/pkg/utils"
+	"github.com/sirupsen/logrus"
 )
 
 type AuthHandler struct {
 	portalv1.UnimplementedPortalAuthServer
 	userRepo       domain.UserRepositoryInterface
 	errorResponder responder.ErrorResponderInterface
+	logger         *logrus.Logger
 }
 
 func NewAuthHandler(
 	userRepo domain.UserRepositoryInterface,
 	errorResponder responder.ErrorResponderInterface,
+	logger *logrus.Logger,
 ) *AuthHandler {
 	return &AuthHandler{
 		userRepo:       userRepo,
 		errorResponder: errorResponder,
+		logger:         logger,
 	}
 }
 

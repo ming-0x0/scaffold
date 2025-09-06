@@ -7,7 +7,9 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	portalv1 "github.com/ming-0x0/scaffold/api/gen/go/portal/v1"
+	"github.com/ming-0x0/scaffold/internal/adapter/gateway/annotator"
 	"github.com/ming-0x0/scaffold/internal/adapter/gateway/marshaler"
+	"github.com/ming-0x0/scaffold/internal/adapter/gateway/middleware"
 	"github.com/ming-0x0/scaffold/internal/adapter/gateway/responder"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -22,6 +24,7 @@ type Config struct {
 
 type Server struct {
 	config    Config
+	annotator annotator.AnnotatorInterface
 	responder responder.ResponderInterface
 	marshaler marshaler.MarshalerInterface
 	logger    *logrus.Logger
@@ -30,6 +33,7 @@ type Server struct {
 func New(cfg Config, logger *logrus.Logger) *Server {
 	return &Server{
 		config:    cfg,
+		annotator: annotator.New(),
 		responder: responder.New(),
 		marshaler: marshaler.New(),
 		logger:    logger,
@@ -51,19 +55,21 @@ func (s *Server) createGRPCConn() (*grpc.ClientConn, error) {
 
 func (s *Server) createMux() *runtime.ServeMux {
 	return runtime.NewServeMux(
-		// Custom error handler
-		runtime.WithErrorHandler(s.responder.ErrorModifier),
-
-		// Response modifier
-		runtime.WithForwardResponseOption(s.responder.ForwardResponseModifier),
+		runtime.WithErrorHandler(s.responder.RespondError),
+		runtime.WithMetadata(s.annotator.AnnotateMetadata),
+		runtime.WithForwardResponseOption(s.responder.Respond),
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, s.marshaler.NewNilMarshaler()),
 	)
 }
 
 func (s *Server) createHTTPServer(mux *runtime.ServeMux) *http.Server {
+	mainMux := http.NewServeMux()
+	mainMux.Handle("/api/", http.StripPrefix("/api", mux))
+	handler := middleware.WithRequestID(mainMux)
+
 	return &http.Server{
 		Addr:         ":" + s.config.Port,
-		Handler:      mux,
+		Handler:      handler,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
 		IdleTimeout:  120 * time.Second,

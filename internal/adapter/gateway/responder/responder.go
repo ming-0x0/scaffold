@@ -27,12 +27,12 @@ func New() *Responder {
 	}
 }
 
-func (res *Responder) ErrorModifier(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
-	res.errorResponder.ErrorModifier(ctx, mux, marshaler, w, r, err)
+func (res *Responder) RespondError(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
+	res.errorResponder.RespondError(ctx, mux, marshaler, w, r, err)
 }
 
-func (res *Responder) ForwardResponseModifier(ctx context.Context, w http.ResponseWriter, msg proto.Message) error {
-	return res.forwardResponder.ForwardResponseModifier(ctx, w, msg)
+func (res *Responder) Respond(ctx context.Context, w http.ResponseWriter, msg proto.Message) error {
+	return res.forwardResponder.Respond(ctx, w, msg)
 }
 
 func writeJSONResponse(w http.ResponseWriter, statusCode int, data any) error {

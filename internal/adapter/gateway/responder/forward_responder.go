@@ -15,7 +15,7 @@ type ForwardResponseWrapper struct {
 }
 
 type ForwardResponderInterface interface {
-	ForwardResponseModifier(ctx context.Context, w http.ResponseWriter, msg proto.Message) error
+	Respond(ctx context.Context, w http.ResponseWriter, msg proto.Message) error
 }
 
 type ForwardResponder struct{}
@@ -51,7 +51,7 @@ func getResponseMessage(msg proto.Message) string {
 	return "OK"
 }
 
-func (f *ForwardResponder) ForwardResponseModifier(ctx context.Context, w http.ResponseWriter, msg proto.Message) error {
+func (f *ForwardResponder) Respond(ctx context.Context, w http.ResponseWriter, msg proto.Message) error {
 	message := getResponseMessage(msg)
 
 	wrapped := ForwardResponseWrapper{

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/ming-0x0/scaffold/pkg/domainerror"
-	"github.com/ming-0x0/scaffold/pkg/transaction"
+	"github.com/ming-0x0/scaffold/internal/shared/domainerror"
+	"github.com/ming-0x0/scaffold/internal/shared/transaction"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
