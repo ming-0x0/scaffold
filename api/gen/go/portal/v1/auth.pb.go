@@ -78,9 +78,9 @@ func (x *LoginRequest) GetPassword() string {
 
 type LoginResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
 	Permissions   []string               `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	RefreshToken  string                 `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	TokenId       string                 `protobuf:"bytes,3,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -115,9 +115,9 @@ func (*LoginResponse) Descriptor() ([]byte, []int) {
 	return file_portal_v1_auth_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *LoginResponse) GetToken() string {
+func (x *LoginResponse) GetAccessToken() string {
 	if x != nil {
-		return x.Token
+		return x.AccessToken
 	}
 	return ""
 }
@@ -129,9 +129,9 @@ func (x *LoginResponse) GetPermissions() []string {
 	return nil
 }
 
-func (x *LoginResponse) GetRefreshToken() string {
+func (x *LoginResponse) GetTokenId() string {
 	if x != nil {
-		return x.RefreshToken
+		return x.TokenId
 	}
 	return ""
 }
@@ -143,14 +143,14 @@ const file_portal_v1_auth_proto_rawDesc = "" +
 	"\x14portal/v1/auth.proto\x12\tportal.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x15common/response.proto\x1a$gnostic/openapi/v3/annotations.proto\"F\n" +
 	"\fLoginRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x8c\x01\n" +
-	"\rLoginResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12 \n" +
-	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x12#\n" +
-	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken:\x1e\x8a\xb5\x18\x1aĐăng nhập thành công2\x82\x01\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x8f\x01\n" +
+	"\rLoginResponse\x12!\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12 \n" +
+	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x12\x19\n" +
+	"\btoken_id\x18\x03 \x01(\tR\atokenId:\x1e\x8a\xb5\x18\x1aĐăng nhập thành công2\x82\x01\n" +
 	"\n" +
 	"PortalAuth\x12t\n" +
-	"\x05Login\x12\x17.portal.v1.LoginRequest\x1a\x18.portal.v1.LoginResponse\"8\xbaG\x15\x12\x05Login\x1a\x05Login*\x05Login\x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/v1/portal/auth/loginB\x9b\x01\n" +
+	"\x05Login\x12\x17.portal.v1.LoginRequest\x1a\x18.portal.v1.LoginResponse\"8\xbaG\x15\x12\x05Login\x1a\x05Login*\x05Login\x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/portal/v1/auth/loginB\x9b\x01\n" +
 	"\rcom.portal.v1B\tAuthProtoP\x01Z:github.com/ming-0x0/scaffold/api/gen/go/portal/v1;portalv1\xa2\x02\x03PXX\xaa\x02\tPortal.V1\xca\x02\tPortal\\V1\xe2\x02\x15Portal\\V1\\GPBMetadata\xea\x02\n" +
 	"Portal::V1b\x06proto3"
 

@@ -9,12 +9,12 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/ming-0x0/scaffold/adapter/gateway"
-	"github.com/ming-0x0/scaffold/adapter/grpc"
-	"github.com/ming-0x0/scaffold/adapter/repository"
-	"github.com/ming-0x0/scaffold/infra/db"
-	"github.com/ming-0x0/scaffold/infra/logger"
-	"github.com/ming-0x0/scaffold/infra/logger/hook"
+	"github.com/ming-0x0/scaffold/internal/adapter/gateway"
+	"github.com/ming-0x0/scaffold/internal/adapter/grpc"
+	"github.com/ming-0x0/scaffold/internal/adapter/repository"
+	"github.com/ming-0x0/scaffold/internal/infra/db"
+	"github.com/ming-0x0/scaffold/internal/infra/logger"
+	"github.com/ming-0x0/scaffold/internal/infra/logger/hook"
 )
 
 func main() {
