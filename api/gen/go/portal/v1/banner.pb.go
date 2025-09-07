@@ -325,6 +325,94 @@ func (x *GetListBannerResponse) GetLimit() int32 {
 	return 0
 }
 
+type GetBannerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BannerId      int32                  `protobuf:"varint,1,opt,name=banner_id,json=bannerId,proto3" json:"banner_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBannerRequest) Reset() {
+	*x = GetBannerRequest{}
+	mi := &file_portal_v1_banner_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBannerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBannerRequest) ProtoMessage() {}
+
+func (x *GetBannerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_portal_v1_banner_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBannerRequest.ProtoReflect.Descriptor instead.
+func (*GetBannerRequest) Descriptor() ([]byte, []int) {
+	return file_portal_v1_banner_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetBannerRequest) GetBannerId() int32 {
+	if x != nil {
+		return x.BannerId
+	}
+	return 0
+}
+
+type GetBannerResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Banner        *Banner                `protobuf:"bytes,1,opt,name=banner,proto3" json:"banner,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBannerResponse) Reset() {
+	*x = GetBannerResponse{}
+	mi := &file_portal_v1_banner_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBannerResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBannerResponse) ProtoMessage() {}
+
+func (x *GetBannerResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_portal_v1_banner_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBannerResponse.ProtoReflect.Descriptor instead.
+func (*GetBannerResponse) Descriptor() ([]byte, []int) {
+	return file_portal_v1_banner_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetBannerResponse) GetBanner() *Banner {
+	if x != nil {
+		return x.Banner
+	}
+	return nil
+}
+
 var File_portal_v1_banner_proto protoreflect.FileDescriptor
 
 const file_portal_v1_banner_proto_rawDesc = "" +
@@ -371,9 +459,19 @@ const file_portal_v1_banner_proto_rawDesc = "" +
 	"total_page\x18\x02 \x01(\x05R\ttotalPage\x12!\n" +
 	"\frecord_count\x18\x03 \x01(\x05R\vrecordCount\x12\x12\n" +
 	"\x04page\x18\x04 \x01(\x05R\x04page\x12\x14\n" +
-	"\x05limit\x18\x05 \x01(\x05R\x05limit2\xcd\x01\n" +
-	"\fPortalBanner\x12\xbc\x01\n" +
-	"\rGetListBanner\x12\x1f.portal.v1.GetListBannerRequest\x1a .portal.v1.GetListBannerResponse\"h\xbaG?\x12\x0fGet list banner\x1a\x0fGet list banner*\rGetListBannerZ\f\n" +
+	"\x05limit\x18\x05 \x01(\x05R\x05limit\"/\n" +
+	"\x10GetBannerRequest\x12\x1b\n" +
+	"\tbanner_id\x18\x01 \x01(\x05R\bbannerId\">\n" +
+	"\x11GetBannerResponse\x12)\n" +
+	"\x06banner\x18\x01 \x01(\v2\x11.portal.v1.BannerR\x06banner2\xd8\x02\n" +
+	"\fPortalBanner\x12\x97\x01\n" +
+	"\tGetBanner\x12\x1b.portal.v1.GetBannerRequest\x1a\x1c.portal.v1.GetBannerResponse\"O\xbaG&\x12\n" +
+	"Get banner\x1a\n" +
+	"Get bannerZ\f\n" +
+	"\n" +
+	"\n" +
+	"\x06Bearer\x12\x00\x82\xd3\xe4\x93\x02 \x12\x1e/v1/portal/banners/{banner_id}\x12\xad\x01\n" +
+	"\rGetListBanner\x12\x1f.portal.v1.GetListBannerRequest\x1a .portal.v1.GetListBannerResponse\"Y\xbaG0\x12\x0fGet list banner\x1a\x0fGet list bannerZ\f\n" +
 	"\n" +
 	"\n" +
 	"\x06Bearer\x12\x00\x82\xd3\xe4\x93\x02 \x12\x1e/v1/portal/banners/list_bannerB\x9d\x01\n" +
@@ -392,23 +490,28 @@ func file_portal_v1_banner_proto_rawDescGZIP() []byte {
 	return file_portal_v1_banner_proto_rawDescData
 }
 
-var file_portal_v1_banner_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_portal_v1_banner_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_portal_v1_banner_proto_goTypes = []any{
 	(*Banner)(nil),                // 0: portal.v1.Banner
 	(*GetListBannerRequest)(nil),  // 1: portal.v1.GetListBannerRequest
 	(*GetListBannerResponse)(nil), // 2: portal.v1.GetListBannerResponse
-	(*Resource)(nil),              // 3: portal.v1.Resource
+	(*GetBannerRequest)(nil),      // 3: portal.v1.GetBannerRequest
+	(*GetBannerResponse)(nil),     // 4: portal.v1.GetBannerResponse
+	(*Resource)(nil),              // 5: portal.v1.Resource
 }
 var file_portal_v1_banner_proto_depIdxs = []int32{
-	3, // 0: portal.v1.Banner.resource:type_name -> portal.v1.Resource
+	5, // 0: portal.v1.Banner.resource:type_name -> portal.v1.Resource
 	0, // 1: portal.v1.GetListBannerResponse.banners:type_name -> portal.v1.Banner
-	1, // 2: portal.v1.PortalBanner.GetListBanner:input_type -> portal.v1.GetListBannerRequest
-	2, // 3: portal.v1.PortalBanner.GetListBanner:output_type -> portal.v1.GetListBannerResponse
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 2: portal.v1.GetBannerResponse.banner:type_name -> portal.v1.Banner
+	3, // 3: portal.v1.PortalBanner.GetBanner:input_type -> portal.v1.GetBannerRequest
+	1, // 4: portal.v1.PortalBanner.GetListBanner:input_type -> portal.v1.GetListBannerRequest
+	4, // 5: portal.v1.PortalBanner.GetBanner:output_type -> portal.v1.GetBannerResponse
+	2, // 6: portal.v1.PortalBanner.GetListBanner:output_type -> portal.v1.GetListBannerResponse
+	5, // [5:7] is the sub-list for method output_type
+	3, // [3:5] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_portal_v1_banner_proto_init() }
@@ -425,7 +528,7 @@ func file_portal_v1_banner_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_portal_v1_banner_proto_rawDesc), len(file_portal_v1_banner_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

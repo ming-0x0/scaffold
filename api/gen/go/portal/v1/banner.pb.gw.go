@@ -35,6 +35,45 @@ var (
 	_ = metadata.Join
 )
 
+func request_PortalBanner_GetBanner_0(ctx context.Context, marshaler runtime.Marshaler, client PortalBannerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetBannerRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	val, ok := pathParams["banner_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "banner_id")
+	}
+	protoReq.BannerId, err = runtime.Int32(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "banner_id", err)
+	}
+	msg, err := client.GetBanner(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_PortalBanner_GetBanner_0(ctx context.Context, marshaler runtime.Marshaler, server PortalBannerServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetBannerRequest
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["banner_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "banner_id")
+	}
+	protoReq.BannerId, err = runtime.Int32(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "banner_id", err)
+	}
+	msg, err := server.GetBanner(ctx, &protoReq)
+	return msg, metadata, err
+}
+
 var filter_PortalBanner_GetListBanner_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
 func request_PortalBanner_GetListBanner_0(ctx context.Context, marshaler runtime.Marshaler, client PortalBannerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
@@ -76,6 +115,26 @@ func local_request_PortalBanner_GetListBanner_0(ctx context.Context, marshaler r
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterPortalBannerHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterPortalBannerHandlerServer(ctx context.Context, mux *runtime.ServeMux, server PortalBannerServer) error {
+	mux.Handle(http.MethodGet, pattern_PortalBanner_GetBanner_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/portal.v1.PortalBanner/GetBanner", runtime.WithHTTPPathPattern("/v1/portal/banners/{banner_id}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_PortalBanner_GetBanner_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_PortalBanner_GetBanner_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
 	mux.Handle(http.MethodGet, pattern_PortalBanner_GetListBanner_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -136,6 +195,23 @@ func RegisterPortalBannerHandler(ctx context.Context, mux *runtime.ServeMux, con
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "PortalBannerClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterPortalBannerHandlerClient(ctx context.Context, mux *runtime.ServeMux, client PortalBannerClient) error {
+	mux.Handle(http.MethodGet, pattern_PortalBanner_GetBanner_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/portal.v1.PortalBanner/GetBanner", runtime.WithHTTPPathPattern("/v1/portal/banners/{banner_id}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_PortalBanner_GetBanner_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_PortalBanner_GetBanner_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
 	mux.Handle(http.MethodGet, pattern_PortalBanner_GetListBanner_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -157,9 +233,11 @@ func RegisterPortalBannerHandlerClient(ctx context.Context, mux *runtime.ServeMu
 }
 
 var (
+	pattern_PortalBanner_GetBanner_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "portal", "banners", "banner_id"}, ""))
 	pattern_PortalBanner_GetListBanner_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "portal", "banners", "list_banner"}, ""))
 )
 
 var (
+	forward_PortalBanner_GetBanner_0     = runtime.ForwardResponseMessage
 	forward_PortalBanner_GetListBanner_0 = runtime.ForwardResponseMessage
 )

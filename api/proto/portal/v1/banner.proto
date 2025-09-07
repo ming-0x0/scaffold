@@ -46,13 +46,41 @@ message GetListBannerResponse {
   int32 limit = 5;
 }
 
+message GetBannerRequest {
+  int32 banner_id = 1;
+}
+
+message GetBannerResponse {
+  Banner banner = 1;
+}
+
 service PortalBanner {
+  rpc GetBanner (GetBannerRequest) returns (GetBannerResponse) {
+    option (google.api.http) = {
+      get: "/v1/portal/banners/{banner_id}"
+    };
+    option (gnostic.openapi.v3.operation) = {
+      summary: "Get banner"
+      description: "Get banner"
+      security: [
+        {
+          additional_properties: [
+            {
+              name: "Bearer";
+              value: {
+                value: []
+              }
+            }
+          ]
+        }
+      ]
+    };
+  }
   rpc GetListBanner (GetListBannerRequest) returns (GetListBannerResponse) {
     option (google.api.http) = {
       get: "/v1/portal/banners/list_banner"
     };
     option (gnostic.openapi.v3.operation) = {
-      operation_id: "GetListBanner"
       summary: "Get list banner"
       description: "Get list banner"
       security: [

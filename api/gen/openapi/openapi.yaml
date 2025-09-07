@@ -39,7 +39,7 @@ paths:
                 - PortalBanner
             summary: Get list banner
             description: Get list banner
-            operationId: GetListBanner
+            operationId: PortalBanner_GetListBanner
             parameters:
                 - name: page
                   in: query
@@ -68,6 +68,29 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/portal.v1.GetListBannerResponse'
+            security:
+                - Bearer: []
+    /v1/portal/banners/{banner_id}:
+        get:
+            tags:
+                - PortalBanner
+            summary: Get banner
+            description: Get banner
+            operationId: PortalBanner_GetBanner
+            parameters:
+                - name: banner_id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/portal.v1.GetBannerResponse'
             security:
                 - Bearer: []
 components:
@@ -109,6 +132,11 @@ components:
                     type: string
                 has_content:
                     type: boolean
+        portal.v1.GetBannerResponse:
+            type: object
+            properties:
+                banner:
+                    $ref: '#/components/schemas/portal.v1.Banner'
         portal.v1.GetListBannerResponse:
             type: object
             properties:

@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	PortalBanner_GetBanner_FullMethodName     = "/portal.v1.PortalBanner/GetBanner"
 	PortalBanner_GetListBanner_FullMethodName = "/portal.v1.PortalBanner/GetListBanner"
 )
 
@@ -26,6 +27,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PortalBannerClient interface {
+	GetBanner(ctx context.Context, in *GetBannerRequest, opts ...grpc.CallOption) (*GetBannerResponse, error)
 	GetListBanner(ctx context.Context, in *GetListBannerRequest, opts ...grpc.CallOption) (*GetListBannerResponse, error)
 }
 
@@ -35,6 +37,16 @@ type portalBannerClient struct {
 
 func NewPortalBannerClient(cc grpc.ClientConnInterface) PortalBannerClient {
 	return &portalBannerClient{cc}
+}
+
+func (c *portalBannerClient) GetBanner(ctx context.Context, in *GetBannerRequest, opts ...grpc.CallOption) (*GetBannerResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBannerResponse)
+	err := c.cc.Invoke(ctx, PortalBanner_GetBanner_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *portalBannerClient) GetListBanner(ctx context.Context, in *GetListBannerRequest, opts ...grpc.CallOption) (*GetListBannerResponse, error) {
@@ -51,6 +63,7 @@ func (c *portalBannerClient) GetListBanner(ctx context.Context, in *GetListBanne
 // All implementations must embed UnimplementedPortalBannerServer
 // for forward compatibility.
 type PortalBannerServer interface {
+	GetBanner(context.Context, *GetBannerRequest) (*GetBannerResponse, error)
 	GetListBanner(context.Context, *GetListBannerRequest) (*GetListBannerResponse, error)
 	mustEmbedUnimplementedPortalBannerServer()
 }
@@ -62,6 +75,9 @@ type PortalBannerServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPortalBannerServer struct{}
 
+func (UnimplementedPortalBannerServer) GetBanner(context.Context, *GetBannerRequest) (*GetBannerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBanner not implemented")
+}
 func (UnimplementedPortalBannerServer) GetListBanner(context.Context, *GetListBannerRequest) (*GetListBannerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetListBanner not implemented")
 }
@@ -84,6 +100,24 @@ func RegisterPortalBannerServer(s grpc.ServiceRegistrar, srv PortalBannerServer)
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&PortalBanner_ServiceDesc, srv)
+}
+
+func _PortalBanner_GetBanner_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBannerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PortalBannerServer).GetBanner(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PortalBanner_GetBanner_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PortalBannerServer).GetBanner(ctx, req.(*GetBannerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _PortalBanner_GetListBanner_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -111,6 +145,10 @@ var PortalBanner_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "portal.v1.PortalBanner",
 	HandlerType: (*PortalBannerServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetBanner",
+			Handler:    _PortalBanner_GetBanner_Handler,
+		},
 		{
 			MethodName: "GetListBanner",
 			Handler:    _PortalBanner_GetListBanner_Handler,
