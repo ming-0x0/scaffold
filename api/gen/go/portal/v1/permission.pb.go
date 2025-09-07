@@ -23,7 +23,7 @@ const (
 
 type Permission struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id             int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	PermissionName string                 `protobuf:"bytes,2,opt,name=permission_name,json=permissionName,proto3" json:"permission_name,omitempty"`
 	FunctionCode   string                 `protobuf:"bytes,3,opt,name=function_code,json=functionCode,proto3" json:"function_code,omitempty"`
 	unknownFields  protoimpl.UnknownFields
@@ -60,7 +60,7 @@ func (*Permission) Descriptor() ([]byte, []int) {
 	return file_portal_v1_permission_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Permission) GetId() int64 {
+func (x *Permission) GetId() int32 {
 	if x != nil {
 		return x.Id
 	}
@@ -88,7 +88,7 @@ const file_portal_v1_permission_proto_rawDesc = "" +
 	"\x1aportal/v1/permission.proto\x12\tportal.v1\"j\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12'\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12'\n" +
 	"\x0fpermission_name\x18\x02 \x01(\tR\x0epermissionName\x12#\n" +
 	"\rfunction_code\x18\x03 \x01(\tR\ffunctionCodeB\xa1\x01\n" +
 	"\rcom.portal.v1B\x0fPermissionProtoP\x01Z:github.com/ming-0x0/scaffold/api/gen/go/portal/v1;portalv1\xa2\x02\x03PXX\xaa\x02\tPortal.V1\xca\x02\tPortal\\V1\xe2\x02\x15Portal\\V1\\GPBMetadata\xea\x02\n" +

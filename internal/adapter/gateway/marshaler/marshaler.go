@@ -2,7 +2,6 @@ package marshaler
 
 import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type MarshalerInterface interface {
@@ -29,14 +28,6 @@ func (m *NilMarshaler) Unmarshal(data []byte, v any) error {
 
 func (m *Marshaler) NewNilMarshaler() runtime.Marshaler {
 	return &NilMarshaler{
-		Marshaler: &runtime.JSONPb{
-			MarshalOptions: protojson.MarshalOptions{
-				EmitUnpopulated: true,
-				UseProtoNames:   true,
-			},
-			UnmarshalOptions: protojson.UnmarshalOptions{
-				DiscardUnknown: true,
-			},
-		},
+		Marshaler: &runtime.JSONPb{},
 	}
 }

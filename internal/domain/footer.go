@@ -12,7 +12,7 @@ var FootersTableName = "footers"
 
 // Footer struct
 type Footer struct {
-	ID        int64                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
+	ID        int32                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
 	NameVi    string                      `gorm:"column:name_vi;type:text;not null" mapstructure:"name_vi"`
 	NameEn    string                      `gorm:"column:name_en;type:text;not null" mapstructure:"name_en"`
 	NameZh    string                      `gorm:"column:name_zh;type:text;not null" mapstructure:"name_zh"`

@@ -23,11 +23,11 @@ const (
 
 type Resource struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
-	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id          int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name        string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	// Type of the resource (1: image, 2: video)
-	Type          int64   `protobuf:"varint,4,opt,name=type,proto3" json:"type,omitempty"`
+	Type          int32   `protobuf:"varint,4,opt,name=type,proto3" json:"type,omitempty"`
 	Url           string  `protobuf:"bytes,5,opt,name=url,proto3" json:"url,omitempty"`
 	YoutubeId     *string `protobuf:"bytes,6,opt,name=youtube_id,json=youtubeId,proto3,oneof" json:"youtube_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -64,7 +64,7 @@ func (*Resource) Descriptor() ([]byte, []int) {
 	return file_portal_v1_resource_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Resource) GetId() int64 {
+func (x *Resource) GetId() int32 {
 	if x != nil {
 		return x.Id
 	}
@@ -85,7 +85,7 @@ func (x *Resource) GetDescription() string {
 	return ""
 }
 
-func (x *Resource) GetType() int64 {
+func (x *Resource) GetType() int32 {
 	if x != nil {
 		return x.Type
 	}
@@ -112,10 +112,10 @@ const file_portal_v1_resource_proto_rawDesc = "" +
 	"\n" +
 	"\x18portal/v1/resource.proto\x12\tportal.v1\"\xbe\x01\n" +
 	"\bResource\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12%\n" +
 	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x12\n" +
-	"\x04type\x18\x04 \x01(\x03R\x04type\x12\x10\n" +
+	"\x04type\x18\x04 \x01(\x05R\x04type\x12\x10\n" +
 	"\x03url\x18\x05 \x01(\tR\x03url\x12\"\n" +
 	"\n" +
 	"youtube_id\x18\x06 \x01(\tH\x01R\tyoutubeId\x88\x01\x01B\x0e\n" +

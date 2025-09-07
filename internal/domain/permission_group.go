@@ -12,7 +12,7 @@ var PermissionGroupsTableName = "permission_groups"
 
 // PermissionGroup struct
 type PermissionGroup struct {
-	ID             int64                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
+	ID             int32                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
 	Name           string                      `gorm:"column:name;type:varchar(255);not null;unique" mapstructure:"name"`
 	Description    undefined.Undefined[string] `json:",omitzero"`
 	FullPermission bool                        `gorm:"column:full_permission;type:tinyint(1);not null;default:0" mapstructure:"full_permission"`

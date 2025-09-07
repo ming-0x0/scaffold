@@ -11,10 +11,10 @@ var RolesTableName = "roles"
 
 // Role struct
 type Role struct {
-	ID                int64           `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
-	PermissionID      int64           `gorm:"column:permission_id;type:bigint;not null" mapstructure:"permission_id"`
+	ID                int32           `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
+	PermissionID      int32           `gorm:"column:permission_id;type:bigint;not null" mapstructure:"permission_id"`
 	Permission        Permission      `gorm:"foreignKey:PermissionID"`
-	PermissionGroupID int64           `gorm:"column:permission_group_id;type:bigint;not null" mapstructure:"permission_group_id"`
+	PermissionGroupID int32           `gorm:"column:permission_group_id;type:bigint;not null" mapstructure:"permission_group_id"`
 	PermissionGroup   PermissionGroup `gorm:"foreignKey:PermissionGroupID"`
 	BaseDomain
 }

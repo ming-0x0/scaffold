@@ -3,8 +3,11 @@ package gateway
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/go-chi/chi/v5"
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	portalv1 "github.com/ming-0x0/scaffold/api/gen/go/portal/v1"
 	"github.com/ming-0x0/scaffold/internal/adapter/gateway/annotator"
@@ -63,13 +66,27 @@ func (s *Server) createMux() *runtime.ServeMux {
 }
 
 func (s *Server) createHTTPServer(mux *runtime.ServeMux) *http.Server {
-	mainMux := http.NewServeMux()
-	mainMux.Handle("/api/", http.StripPrefix("/api", mux))
-	handler := middleware.WithRequestID(mainMux)
+	r := chi.NewRouter()
+
+	r.Use(
+		chiMiddleware.Recoverer,
+		chiMiddleware.Logger,
+		middleware.WithRequestID,
+	)
+
+	r.Route("/api", func(r chi.Router) {
+		r.HandleFunc("/*", func(w http.ResponseWriter, req *http.Request) {
+			req.URL.Path = strings.TrimPrefix(req.URL.Path, "/api")
+			if req.URL.Path == "" {
+				req.URL.Path = "/"
+			}
+			mux.ServeHTTP(w, req)
+		})
+	})
 
 	return &http.Server{
 		Addr:         ":" + s.config.Port,
-		Handler:      handler,
+		Handler:      r,
 		ReadTimeout:  30 * time.Second,
 		WriteTimeout: 30 * time.Second,
 		IdleTimeout:  120 * time.Second,

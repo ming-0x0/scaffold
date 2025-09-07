@@ -23,15 +23,15 @@ const (
 
 type Banner struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	NameVi        string                 `protobuf:"bytes,2,opt,name=name_vi,json=nameVi,proto3" json:"name_vi,omitempty"`
 	NameEn        string                 `protobuf:"bytes,3,opt,name=name_en,json=nameEn,proto3" json:"name_en,omitempty"`
 	NameZh        string                 `protobuf:"bytes,4,opt,name=name_zh,json=nameZh,proto3" json:"name_zh,omitempty"`
 	DescriptionVi *string                `protobuf:"bytes,5,opt,name=description_vi,json=descriptionVi,proto3,oneof" json:"description_vi,omitempty"`
 	DescriptionEn *string                `protobuf:"bytes,6,opt,name=description_en,json=descriptionEn,proto3,oneof" json:"description_en,omitempty"`
 	DescriptionZh *string                `protobuf:"bytes,7,opt,name=description_zh,json=descriptionZh,proto3,oneof" json:"description_zh,omitempty"`
-	Position      *int64                 `protobuf:"varint,8,opt,name=position,proto3,oneof" json:"position,omitempty"`
-	Status        *int64                 `protobuf:"varint,9,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	Position      *int32                 `protobuf:"varint,8,opt,name=position,proto3,oneof" json:"position,omitempty"`
+	Status        *int32                 `protobuf:"varint,9,opt,name=status,proto3,oneof" json:"status,omitempty"`
 	ResourceId    string                 `protobuf:"bytes,10,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
 	Link          *string                `protobuf:"bytes,11,opt,name=link,proto3,oneof" json:"link,omitempty"`
 	ButtonNameVi  *string                `protobuf:"bytes,12,opt,name=button_name_vi,json=buttonNameVi,proto3,oneof" json:"button_name_vi,omitempty"`
@@ -72,7 +72,7 @@ func (*Banner) Descriptor() ([]byte, []int) {
 	return file_web_v1_banner_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Banner) GetId() int64 {
+func (x *Banner) GetId() int32 {
 	if x != nil {
 		return x.Id
 	}
@@ -121,14 +121,14 @@ func (x *Banner) GetDescriptionZh() string {
 	return ""
 }
 
-func (x *Banner) GetPosition() int64 {
+func (x *Banner) GetPosition() int32 {
 	if x != nil && x.Position != nil {
 		return *x.Position
 	}
 	return 0
 }
 
-func (x *Banner) GetStatus() int64 {
+func (x *Banner) GetStatus() int32 {
 	if x != nil && x.Status != nil {
 		return *x.Status
 	}
@@ -183,15 +183,15 @@ const file_web_v1_banner_proto_rawDesc = "" +
 	"\n" +
 	"\x13web/v1/banner.proto\x12\x06web.v1\"\x94\x05\n" +
 	"\x06Banner\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\aname_vi\x18\x02 \x01(\tR\x06nameVi\x12\x17\n" +
 	"\aname_en\x18\x03 \x01(\tR\x06nameEn\x12\x17\n" +
 	"\aname_zh\x18\x04 \x01(\tR\x06nameZh\x12*\n" +
 	"\x0edescription_vi\x18\x05 \x01(\tH\x00R\rdescriptionVi\x88\x01\x01\x12*\n" +
 	"\x0edescription_en\x18\x06 \x01(\tH\x01R\rdescriptionEn\x88\x01\x01\x12*\n" +
 	"\x0edescription_zh\x18\a \x01(\tH\x02R\rdescriptionZh\x88\x01\x01\x12\x1f\n" +
-	"\bposition\x18\b \x01(\x03H\x03R\bposition\x88\x01\x01\x12\x1b\n" +
-	"\x06status\x18\t \x01(\x03H\x04R\x06status\x88\x01\x01\x12\x1f\n" +
+	"\bposition\x18\b \x01(\x05H\x03R\bposition\x88\x01\x01\x12\x1b\n" +
+	"\x06status\x18\t \x01(\x05H\x04R\x06status\x88\x01\x01\x12\x1f\n" +
 	"\vresource_id\x18\n" +
 	" \x01(\tR\n" +
 	"resourceId\x12\x17\n" +

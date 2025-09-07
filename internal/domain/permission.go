@@ -11,7 +11,7 @@ var PermissionsTableName = "permissions"
 
 // Permission struct
 type Permission struct {
-	ID             int64  `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
+	ID             int32  `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
 	PermissionName string `gorm:"column:permission_name;type:varchar(255);not null;unique" mapstructure:"permission_name"`
 	FunctionCode   string `gorm:"column:function_code;type:varchar(255);not null" mapstructure:"function_code"`
 	BaseDomain

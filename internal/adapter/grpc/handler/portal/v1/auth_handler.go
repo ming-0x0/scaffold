@@ -9,6 +9,7 @@ import (
 	portalv1 "github.com/ming-0x0/scaffold/api/gen/go/portal/v1"
 	"github.com/ming-0x0/scaffold/internal/domain"
 	"github.com/ming-0x0/scaffold/internal/shared/domainerror"
+	"github.com/ming-0x0/scaffold/internal/shared/repository/condition"
 	"github.com/ming-0x0/scaffold/pkg/iterator"
 	"github.com/ming-0x0/scaffold/pkg/jwt"
 	"github.com/ming-0x0/scaffold/pkg/utils"
@@ -32,8 +33,8 @@ func (h *AuthHandler) Login(ctx context.Context, req *portalv1.LoginRequest) (*p
 
 	user, err := userRepo.TakeByConditions(
 		ctx,
-		userRepo.EQ("username", req.Username),
-		userRepo.PreloadAssociations(),
+		condition.EQ("username", req.Username),
+		condition.PreloadAssociations(),
 	)
 	if err != nil {
 		var domainErr *domainerror.DomainError
@@ -60,8 +61,8 @@ func (h *AuthHandler) Login(ctx context.Context, req *portalv1.LoginRequest) (*p
 	if !user.PermissionGroup.FullPermission {
 		roles, err := roleRepo.FindByConditions(
 			ctx,
-			roleRepo.EQ("permission_group_id", user.PermissionGroupID),
-			roleRepo.PreloadAssociations(),
+			condition.EQ("permission_group_id", user.PermissionGroupID),
+			condition.PreloadAssociations(),
 		)
 		if err != nil {
 			return nil, err
@@ -72,7 +73,7 @@ func (h *AuthHandler) Login(ctx context.Context, req *portalv1.LoginRequest) (*p
 	} else {
 		portalFuncList, err = permissionRepo.FindByConditions(
 			ctx,
-			permissionRepo.PreloadAssociations(),
+			condition.PreloadAssociations(),
 		)
 		if err != nil {
 			return nil, err
@@ -98,7 +99,7 @@ func (h *AuthHandler) Login(ctx context.Context, req *portalv1.LoginRequest) (*p
 		return nil, err
 	}
 
-	go func(userID int64, accessToken string, expiredAt time.Time, tokenID string) {
+	go func(userID int32, accessToken string, expiredAt time.Time, tokenID string) {
 		userToken := &domain.UserToken{
 			UserID:    userID,
 			Token:     accessToken,
@@ -121,8 +122,9 @@ func (h *AuthHandler) Login(ctx context.Context, req *portalv1.LoginRequest) (*p
 		TokenId: tokenID,
 		User: &portalv1.User{
 			Id:       user.ID,
-			Username: user.Username,
+			FullName: user.FullName,
 			Email:    user.Email,
+			Username: user.Username,
 			IsAdmin:  user.IsAdmin,
 		},
 	}, nil

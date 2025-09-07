@@ -12,7 +12,7 @@ import (
 // PostsTableName TableName
 var PostsTableName = "posts"
 
-type PostStatus int64
+type PostStatus int32
 
 const (
 	PostStatusDraft PostStatus = iota + 1
@@ -22,7 +22,7 @@ const (
 	PostStatusRemoved
 )
 
-type PostType int64
+type PostType int32
 
 const (
 	PostTypeNews PostType = iota + 1
@@ -34,7 +34,7 @@ const (
 
 // Post struct
 type Post struct {
-	ID            int64                          `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
+	ID            int32                          `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
 	TitleVi       string                         `gorm:"column:title_vi;type:text;not null" mapstructure:"title_vi"`
 	TitleEn       string                         `gorm:"column:title_en;type:text;not null" mapstructure:"title_en"`
 	TitleZh       string                         `gorm:"column:title_zh;type:text;not null" mapstructure:"title_zh"`
@@ -47,7 +47,7 @@ type Post struct {
 	DescriptionVi undefined.Undefined[string]    `gorm:"column:description_vi;type:text" mapstructure:"description_vi"`
 	DescriptionEn undefined.Undefined[string]    `gorm:"column:description_en;type:text" mapstructure:"description_en"`
 	DescriptionZh undefined.Undefined[string]    `gorm:"column:description_zh;type:text" mapstructure:"description_zh"`
-	Avatar        int64                          `gorm:"column:avatar;type:bigint;not null" mapstructure:"avatar"` // ảnh đại diện
+	Avatar        int32                          `gorm:"column:avatar;type:bigint;not null" mapstructure:"avatar"` // ảnh đại diện
 	ResourceIDs   undefined.Undefined[string]    `gorm:"column:resource_ids;type:text" mapstructure:"resource_ids"`
 	ContentVi     string                         `gorm:"column:content_vi;type:text;not null" mapstructure:"content_vi"`
 	ContentEn     string                         `gorm:"column:content_en;type:text;not null" mapstructure:"content_en"`

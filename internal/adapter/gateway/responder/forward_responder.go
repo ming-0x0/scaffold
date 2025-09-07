@@ -6,13 +6,8 @@ import (
 
 	"github.com/ming-0x0/scaffold/api/gen/go/common"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 )
-
-type ForwardResponseWrapper struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-	Data    any    `json:"data"`
-}
 
 type ForwardResponderInterface interface {
 	Respond(ctx context.Context, w http.ResponseWriter, msg proto.Message) error
@@ -54,11 +49,16 @@ func getResponseMessage(msg proto.Message) string {
 func (f *ForwardResponder) Respond(ctx context.Context, w http.ResponseWriter, msg proto.Message) error {
 	message := getResponseMessage(msg)
 
-	wrapped := ForwardResponseWrapper{
-		Code:    0,
-		Message: message,
-		Data:    msg,
+	anyMsg, err := anypb.New(msg)
+	if err != nil {
+		return err
 	}
 
-	return writeJSONResponse(w, http.StatusOK, wrapped)
+	wrapped := common.ResponseWrapper{
+		Code:    0,
+		Message: message,
+		Data:    anyMsg,
+	}
+
+	return writeJSONResponse(w, http.StatusOK, &wrapped)
 }

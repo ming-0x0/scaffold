@@ -10,7 +10,7 @@ import (
 // PartnersTableName TableName
 var PartnersTableName = "partners"
 
-type PartnerStatus int64
+type PartnerStatus int32
 
 const (
 	PartnerStatusActive   PartnerStatus = 1
@@ -19,14 +19,14 @@ const (
 
 // Partner struct
 type Partner struct {
-	ID            int64                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
+	ID            int32                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
 	Name          string                      `gorm:"column:name;type:text;not null" mapstructure:"name"`
 	DescriptionVi undefined.Undefined[string] `gorm:"column:description_vi;type:text" mapstructure:"description_vi"`
 	DescriptionEn undefined.Undefined[string] `gorm:"column:description_en;type:text" mapstructure:"description_en"`
 	DescriptionZh undefined.Undefined[string] `gorm:"column:description_zh;type:text" mapstructure:"description_zh"`
 	Status        PartnerStatus               `gorm:"column:status;type:int;not null;default:1" mapstructure:"status"` // 1: active, 2: inactive
-	Position      undefined.Undefined[int64]  `gorm:"column:position;type:int;unique" mapstructure:"position"`
-	ResourceID    int64                       `gorm:"column:resource_id;type:bigint;not null" mapstructure:"resource_id"`
+	Position      undefined.Undefined[int32]  `gorm:"column:position;type:int;unique" mapstructure:"position"`
+	ResourceID    int32                       `gorm:"column:resource_id;type:bigint;not null" mapstructure:"resource_id"`
 	Link          undefined.Undefined[string] `gorm:"column:link;type:text" mapstructure:"link"`
 	BaseDomain
 }

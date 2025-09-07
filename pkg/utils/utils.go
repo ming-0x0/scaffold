@@ -23,8 +23,8 @@ func Dereference[T any](i *T) T {
 	return *new(T)
 }
 
-func WithPagination(page *int64, limit *int64) map[string]int64 {
-	pageData := make(map[string]int64, 2)
+func WithPagination(page *int32, limit *int32) map[string]int32 {
+	pageData := make(map[string]int32, 2)
 
 	if page == nil {
 		pageData["page"] = 1
@@ -41,7 +41,7 @@ func WithPagination(page *int64, limit *int64) map[string]int64 {
 	return pageData
 }
 
-func CalcTotalPage(total int64, limit int64) int64 {
+func CalcTotalPage(total int32, limit int32) int32 {
 	t := total / limit
 	if (total % limit) != 0 {
 		t += 1

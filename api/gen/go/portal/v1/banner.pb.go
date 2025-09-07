@@ -25,16 +25,16 @@ const (
 
 type Banner struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	NameVi        string                 `protobuf:"bytes,2,opt,name=name_vi,json=nameVi,proto3" json:"name_vi,omitempty"`
 	NameEn        string                 `protobuf:"bytes,3,opt,name=name_en,json=nameEn,proto3" json:"name_en,omitempty"`
 	NameZh        string                 `protobuf:"bytes,4,opt,name=name_zh,json=nameZh,proto3" json:"name_zh,omitempty"`
 	DescriptionVi *string                `protobuf:"bytes,5,opt,name=description_vi,json=descriptionVi,proto3,oneof" json:"description_vi,omitempty"`
 	DescriptionEn *string                `protobuf:"bytes,6,opt,name=description_en,json=descriptionEn,proto3,oneof" json:"description_en,omitempty"`
 	DescriptionZh *string                `protobuf:"bytes,7,opt,name=description_zh,json=descriptionZh,proto3,oneof" json:"description_zh,omitempty"`
-	Position      *int64                 `protobuf:"varint,8,opt,name=position,proto3,oneof" json:"position,omitempty"`
+	Position      *int32                 `protobuf:"varint,8,opt,name=position,proto3,oneof" json:"position,omitempty"`
 	// Status of the banner (1: active, 2: inactive)
-	Status        int64     `protobuf:"varint,9,opt,name=status,proto3" json:"status,omitempty"`
+	Status        int32     `protobuf:"varint,9,opt,name=status,proto3" json:"status,omitempty"`
 	Resource      *Resource `protobuf:"bytes,10,opt,name=resource,proto3" json:"resource,omitempty"`
 	Link          *string   `protobuf:"bytes,11,opt,name=link,proto3,oneof" json:"link,omitempty"`
 	ButtonNameVi  *string   `protobuf:"bytes,12,opt,name=button_name_vi,json=buttonNameVi,proto3,oneof" json:"button_name_vi,omitempty"`
@@ -75,7 +75,7 @@ func (*Banner) Descriptor() ([]byte, []int) {
 	return file_portal_v1_banner_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Banner) GetId() int64 {
+func (x *Banner) GetId() int32 {
 	if x != nil {
 		return x.Id
 	}
@@ -124,14 +124,14 @@ func (x *Banner) GetDescriptionZh() string {
 	return ""
 }
 
-func (x *Banner) GetPosition() int64 {
+func (x *Banner) GetPosition() int32 {
 	if x != nil && x.Position != nil {
 		return *x.Position
 	}
 	return 0
 }
 
-func (x *Banner) GetStatus() int64 {
+func (x *Banner) GetStatus() int32 {
 	if x != nil {
 		return x.Status
 	}
@@ -182,11 +182,11 @@ func (x *Banner) GetHasContent() bool {
 
 type GetListBannerRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Page  *int64                 `protobuf:"varint,1,opt,name=page,proto3,oneof" json:"page,omitempty"`
-	Limit *int64                 `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
+	Page  *int32                 `protobuf:"varint,1,opt,name=page,proto3,oneof" json:"page,omitempty"`
+	Limit *int32                 `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
 	Name  *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`
 	// Status of the banner (1: active, 2: inactive)
-	Status        *int64 `protobuf:"varint,4,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	Status        *int32 `protobuf:"varint,4,opt,name=status,proto3,oneof" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -221,14 +221,14 @@ func (*GetListBannerRequest) Descriptor() ([]byte, []int) {
 	return file_portal_v1_banner_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetListBannerRequest) GetPage() int64 {
+func (x *GetListBannerRequest) GetPage() int32 {
 	if x != nil && x.Page != nil {
 		return *x.Page
 	}
 	return 0
 }
 
-func (x *GetListBannerRequest) GetLimit() int64 {
+func (x *GetListBannerRequest) GetLimit() int32 {
 	if x != nil && x.Limit != nil {
 		return *x.Limit
 	}
@@ -242,7 +242,7 @@ func (x *GetListBannerRequest) GetName() string {
 	return ""
 }
 
-func (x *GetListBannerRequest) GetStatus() int64 {
+func (x *GetListBannerRequest) GetStatus() int32 {
 	if x != nil && x.Status != nil {
 		return *x.Status
 	}
@@ -252,10 +252,10 @@ func (x *GetListBannerRequest) GetStatus() int64 {
 type GetListBannerResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Banners       []*Banner              `protobuf:"bytes,1,rep,name=banners,proto3" json:"banners,omitempty"`
-	TotalPage     int64                  `protobuf:"varint,2,opt,name=total_page,json=totalPage,proto3" json:"total_page,omitempty"`
-	RecordCount   int64                  `protobuf:"varint,3,opt,name=record_count,json=recordCount,proto3" json:"record_count,omitempty"`
-	Page          int64                  `protobuf:"varint,4,opt,name=page,proto3" json:"page,omitempty"`
-	Limit         int64                  `protobuf:"varint,5,opt,name=limit,proto3" json:"limit,omitempty"`
+	TotalPage     int32                  `protobuf:"varint,2,opt,name=total_page,json=totalPage,proto3" json:"total_page,omitempty"`
+	RecordCount   int32                  `protobuf:"varint,3,opt,name=record_count,json=recordCount,proto3" json:"record_count,omitempty"`
+	Page          int32                  `protobuf:"varint,4,opt,name=page,proto3" json:"page,omitempty"`
+	Limit         int32                  `protobuf:"varint,5,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -297,28 +297,28 @@ func (x *GetListBannerResponse) GetBanners() []*Banner {
 	return nil
 }
 
-func (x *GetListBannerResponse) GetTotalPage() int64 {
+func (x *GetListBannerResponse) GetTotalPage() int32 {
 	if x != nil {
 		return x.TotalPage
 	}
 	return 0
 }
 
-func (x *GetListBannerResponse) GetRecordCount() int64 {
+func (x *GetListBannerResponse) GetRecordCount() int32 {
 	if x != nil {
 		return x.RecordCount
 	}
 	return 0
 }
 
-func (x *GetListBannerResponse) GetPage() int64 {
+func (x *GetListBannerResponse) GetPage() int32 {
 	if x != nil {
 		return x.Page
 	}
 	return 0
 }
 
-func (x *GetListBannerResponse) GetLimit() int64 {
+func (x *GetListBannerResponse) GetLimit() int32 {
 	if x != nil {
 		return x.Limit
 	}
@@ -331,15 +331,15 @@ const file_portal_v1_banner_proto_rawDesc = "" +
 	"\n" +
 	"\x16portal/v1/banner.proto\x12\tportal.v1\x1a\x1cgoogle/api/annotations.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\"gnostic/openapi/v3/openapiv3.proto\x1a\x18portal/v1/resource.proto\"\x94\x05\n" +
 	"\x06Banner\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x17\n" +
 	"\aname_vi\x18\x02 \x01(\tR\x06nameVi\x12\x17\n" +
 	"\aname_en\x18\x03 \x01(\tR\x06nameEn\x12\x17\n" +
 	"\aname_zh\x18\x04 \x01(\tR\x06nameZh\x12*\n" +
 	"\x0edescription_vi\x18\x05 \x01(\tH\x00R\rdescriptionVi\x88\x01\x01\x12*\n" +
 	"\x0edescription_en\x18\x06 \x01(\tH\x01R\rdescriptionEn\x88\x01\x01\x12*\n" +
 	"\x0edescription_zh\x18\a \x01(\tH\x02R\rdescriptionZh\x88\x01\x01\x12\x1f\n" +
-	"\bposition\x18\b \x01(\x03H\x03R\bposition\x88\x01\x01\x12\x16\n" +
-	"\x06status\x18\t \x01(\x03R\x06status\x12/\n" +
+	"\bposition\x18\b \x01(\x05H\x03R\bposition\x88\x01\x01\x12\x16\n" +
+	"\x06status\x18\t \x01(\x05R\x06status\x12/\n" +
 	"\bresource\x18\n" +
 	" \x01(\v2\x13.portal.v1.ResourceR\bresource\x12\x17\n" +
 	"\x04link\x18\v \x01(\tH\x04R\x04link\x88\x01\x01\x12)\n" +
@@ -357,10 +357,10 @@ const file_portal_v1_banner_proto_rawDesc = "" +
 	"\x0f_button_name_enB\x11\n" +
 	"\x0f_button_name_zh\"\xa7\x01\n" +
 	"\x14GetListBannerRequest\x12\x17\n" +
-	"\x04page\x18\x01 \x01(\x03H\x00R\x04page\x88\x01\x01\x12\x19\n" +
-	"\x05limit\x18\x02 \x01(\x03H\x01R\x05limit\x88\x01\x01\x12\x17\n" +
+	"\x04page\x18\x01 \x01(\x05H\x00R\x04page\x88\x01\x01\x12\x19\n" +
+	"\x05limit\x18\x02 \x01(\x05H\x01R\x05limit\x88\x01\x01\x12\x17\n" +
 	"\x04name\x18\x03 \x01(\tH\x02R\x04name\x88\x01\x01\x12\x1b\n" +
-	"\x06status\x18\x04 \x01(\x03H\x03R\x06status\x88\x01\x01B\a\n" +
+	"\x06status\x18\x04 \x01(\x05H\x03R\x06status\x88\x01\x01B\a\n" +
 	"\x05_pageB\b\n" +
 	"\x06_limitB\a\n" +
 	"\x05_nameB\t\n" +
@@ -368,10 +368,10 @@ const file_portal_v1_banner_proto_rawDesc = "" +
 	"\x15GetListBannerResponse\x12+\n" +
 	"\abanners\x18\x01 \x03(\v2\x11.portal.v1.BannerR\abanners\x12\x1d\n" +
 	"\n" +
-	"total_page\x18\x02 \x01(\x03R\ttotalPage\x12!\n" +
-	"\frecord_count\x18\x03 \x01(\x03R\vrecordCount\x12\x12\n" +
-	"\x04page\x18\x04 \x01(\x03R\x04page\x12\x14\n" +
-	"\x05limit\x18\x05 \x01(\x03R\x05limit2\xcd\x01\n" +
+	"total_page\x18\x02 \x01(\x05R\ttotalPage\x12!\n" +
+	"\frecord_count\x18\x03 \x01(\x05R\vrecordCount\x12\x12\n" +
+	"\x04page\x18\x04 \x01(\x05R\x04page\x12\x14\n" +
+	"\x05limit\x18\x05 \x01(\x05R\x05limit2\xcd\x01\n" +
 	"\fPortalBanner\x12\xbc\x01\n" +
 	"\rGetListBanner\x12\x1f.portal.v1.GetListBannerRequest\x1a .portal.v1.GetListBannerResponse\"h\xbaG?\x12\x0fGet list banner\x1a\x0fGet list banner*\rGetListBannerZ\f\n" +
 	"\n" +

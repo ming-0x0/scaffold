@@ -5,7 +5,23 @@ package common;
 option go_package = "github.com/ming-0x0/scaffold/api/gen/go/common";
 
 import "google/protobuf/descriptor.proto";
+import "google/protobuf/any.proto";
+
+import "common/error.proto";
 
 extend google.protobuf.MessageOptions {
   string response_message = 50001;
 }
+
+message ResponseWrapper {
+  int32 code = 1;
+  string message = 2;
+  google.protobuf.Any data = 3;
+}
+
+message ErrorWrapper {
+  int32 code = 1;
+  string message = 2;
+  ErrorDetails error = 3;
+}
+

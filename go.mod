@@ -3,6 +3,7 @@ module github.com/ming-0x0/scaffold
 go 1.24.6
 
 require (
+	github.com/go-chi/chi/v5 v5.2.3
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/gnostic v0.7.1

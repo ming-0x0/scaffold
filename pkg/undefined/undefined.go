@@ -25,7 +25,7 @@ var (
 //   - Database operations where NULL values need to be distinguished from zero values
 //
 // Supported types for T include:
-//   - Basic types: int64, float64, bool, string
+//   - Basic types: int32, float64, bool, string
 //   - time.Time for timestamp handling
 //   - []byte for binary data
 //   - nil for explicit NULL values in databases

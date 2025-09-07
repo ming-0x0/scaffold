@@ -2,18 +2,14 @@ package responder
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	common "github.com/ming-0x0/scaffold/api/gen/go/common"
 	"google.golang.org/grpc/status"
 )
-
-type ErrorWrapper struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-	Error   any    `json:"error,omitempty"`
-}
 
 type ErrorResponderInterface interface {
 	RespondError(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error)
@@ -29,16 +25,18 @@ func (e *ErrorResponder) RespondError(ctx context.Context, mux *runtime.ServeMux
 	st := status.Convert(err)
 	httpCode := grpcCodeToHTTPCode(st.Code())
 
-	wrapped := ErrorWrapper{
-		Code:    int(st.Code()),
+	wrapped := common.ErrorWrapper{
+		Code:    int32(st.Code()),
 		Message: st.Message(),
 	}
 
 	if os.Getenv("ENV") == "dev" {
-		wrapped.Error = st.Details()
+		wrapped.Error = &common.ErrorDetails{
+			Details: fmt.Sprintf("%v", st.Details()),
+		}
 	}
 
-	if err := writeJSONResponse(w, httpCode, wrapped); err != nil {
+	if err := writeJSONResponse(w, httpCode, &wrapped); err != nil {
 		return
 	}
 }

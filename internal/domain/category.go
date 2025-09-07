@@ -10,14 +10,14 @@ import (
 // CategoriesTableName TableName
 var CategoriesTableName = "categories"
 
-type CategoryType int64
+type CategoryType int32
 
 const (
 	CategoryTypeDetail CategoryType = iota + 2
 	CategoryTypeList
 )
 
-type CategoryStatus int64
+type CategoryStatus int32
 
 const (
 	CategoryStatusActive CategoryStatus = iota + 1
@@ -25,7 +25,7 @@ const (
 )
 
 type Category struct {
-	ID              int64                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
+	ID              int32                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
 	NameVi          string                      `gorm:"column:name_vi;type:text;not null" mapstructure:"name_vi"`
 	NameEn          string                      `gorm:"column:name_en;type:text;not null" mapstructure:"name_en"`
 	NameZh          string                      `gorm:"column:name_zh;type:text;not null" mapstructure:"name_zh"`
@@ -37,11 +37,11 @@ type Category struct {
 	RouterVi        undefined.Undefined[string] `gorm:"column:router_vi;type:text" mapstructure:"router_vi"`
 	RouterEn        undefined.Undefined[string] `gorm:"column:router_en;type:text" mapstructure:"router_en"`
 	RouterZh        undefined.Undefined[string] `gorm:"column:router_zh;type:text" mapstructure:"router_zh"`
-	Position        undefined.Undefined[int64]  `gorm:"column:position;type:bigint;idx_parent_type_position" mapstructure:"position"`
-	ParentID        undefined.Undefined[int64]  `gorm:"column:parent_id;type:bigint;idx_parent_type_position" mapstructure:"parent_id"`
+	Position        undefined.Undefined[int32]  `gorm:"column:position;type:bigint;idx_parent_type_position" mapstructure:"position"`
+	ParentID        undefined.Undefined[int32]  `gorm:"column:parent_id;type:bigint;idx_parent_type_position" mapstructure:"parent_id"`
 	Status          CategoryStatus              `gorm:"column:status;type:int;not null;default:1" mapstructure:"status"`
-	ResourceID      undefined.Undefined[int64]  `gorm:"column:resource_id;type:bigint" mapstructure:"resource_id"`
-	Level           int64                       `gorm:"column:level;type:bigint;not null" mapstructure:"level"`
+	ResourceID      undefined.Undefined[int32]  `gorm:"column:resource_id;type:bigint" mapstructure:"resource_id"`
+	Level           int32                       `gorm:"column:level;type:bigint;not null" mapstructure:"level"`
 	ChildCategories []Category                  `gorm:"foreignKey:ParentID"`
 	BaseDomain
 }

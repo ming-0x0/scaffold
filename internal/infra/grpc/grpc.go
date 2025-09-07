@@ -3,7 +3,12 @@ package grpc
 import (
 	"context"
 	"net"
+
 	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 
 	portalv1 "github.com/ming-0x0/scaffold/api/gen/go/portal/v1"
 	"github.com/ming-0x0/scaffold/internal/adapter"
@@ -12,9 +17,6 @@ import (
 	"github.com/ming-0x0/scaffold/internal/adapter/grpc/responder"
 	"github.com/ming-0x0/scaffold/internal/domain"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/health"
-	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"gorm.io/gorm"
 )
@@ -48,6 +50,7 @@ func New(
 
 	serverOpts := []grpc.ServerOption{
 		grpc.ChainUnaryInterceptor(
+			s.interceptor.InterceptPanic,
 			s.interceptor.InterceptContext,
 		),
 	}

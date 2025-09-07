@@ -13,8 +13,8 @@ var UserTokensTableName = "user_tokens"
 
 // UserToken struct
 type UserToken struct {
-	ID        int64     `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
-	UserID    int64     `gorm:"column:user_id;type:bigint;not null" mapstructure:"user_id"`
+	ID        int32     `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
+	UserID    int32     `gorm:"column:user_id;type:bigint;not null" mapstructure:"user_id"`
 	User      User      `gorm:"foreignKey:UserID;references:ID"`
 	Token     string    `gorm:"column:token;type:text;not null" mapstructure:"token"`
 	TokenID   string    `gorm:"column:token_id;type:text;not null" mapstructure:"token_id"`

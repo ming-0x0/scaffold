@@ -5,7 +5,7 @@ import (
 
 	portalv1 "github.com/ming-0x0/scaffold/api/gen/go/portal/v1"
 	"github.com/ming-0x0/scaffold/internal/domain"
-	"github.com/ming-0x0/scaffold/internal/shared/repository"
+	"github.com/ming-0x0/scaffold/internal/shared/repository/condition"
 	"github.com/ming-0x0/scaffold/pkg/utils"
 )
 
@@ -27,19 +27,19 @@ func (h *BannerHandler) GetListBanner(ctx context.Context, req *portalv1.GetList
 
 	pageData := utils.WithPagination(req.Page, req.Limit)
 
-	conditions := make([]repository.Condition, 0, 5)
-	conditions = append(conditions, bannerRepo.PreloadAssociations())
+	conditions := make([]condition.Condition, 0, 5)
+	conditions = append(conditions, condition.PreloadAssociations())
 
 	if req.Status != nil {
-		conditions = append(conditions, bannerRepo.EQ("status", utils.Dereference(req.Status)))
+		conditions = append(conditions, condition.EQ("status", utils.Dereference(req.Status)))
 	}
 
 	if req.Name != nil {
 		conditions = append(conditions,
-			bannerRepo.OR(
-				bannerRepo.LIKE("name_vi", utils.Dereference(req.Name)),
-				bannerRepo.LIKE("name_en", utils.Dereference(req.Name)),
-				bannerRepo.LIKE("name_zh", utils.Dereference(req.Name)),
+			condition.OR(
+				condition.LIKE("name_vi", utils.Dereference(req.Name)),
+				condition.LIKE("name_en", utils.Dereference(req.Name)),
+				condition.LIKE("name_zh", utils.Dereference(req.Name)),
 			),
 		)
 	}
@@ -53,15 +53,15 @@ func (h *BannerHandler) GetListBanner(ctx context.Context, req *portalv1.GetList
 		return nil, h.errorResponder.Respond(err)
 	}
 
-	resourceMap := make(map[int64]*domain.Resource, len(banners))
+	resourceMap := make(map[int32]*domain.Resource, len(banners))
 	if len(banners) > 0 {
 		resourceRepo := h.adapter.ResourceRepository()
-		resourceIDs := make([]int64, 0, len(banners))
+		resourceIDs := make([]int32, 0, len(banners))
 		for _, banner := range banners {
 			resourceIDs = append(resourceIDs, banner.ResourceID)
 		}
 
-		resources, err := resourceRepo.FindByConditions(ctx, resourceRepo.IN("id", utils.ToAnySlice(resourceIDs)))
+		resources, err := resourceRepo.FindByConditions(ctx, condition.IN("id", utils.ToAnySlice(resourceIDs)))
 		if err != nil {
 			return nil, h.errorResponder.Respond(err)
 		}
@@ -82,10 +82,10 @@ func (h *BannerHandler) GetListBanner(ctx context.Context, req *portalv1.GetList
 				DescriptionEn: banner.DescriptionEn.Ptr(),
 				DescriptionZh: banner.DescriptionZh.Ptr(),
 				Position:      banner.Position.Ptr(),
-				Status:        int64(banner.Status),
+				Status:        int32(banner.Status),
 				Resource: &portalv1.Resource{
 					Id:        resourceMap[banner.ResourceID].ID,
-					Type:      int64(resourceMap[banner.ResourceID].Type),
+					Type:      int32(resourceMap[banner.ResourceID].Type),
 					Url:       resourceMap[banner.ResourceID].Url,
 					YoutubeId: resourceMap[banner.ResourceID].YoutubeID.Ptr(),
 				},

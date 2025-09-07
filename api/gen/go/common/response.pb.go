@@ -10,7 +10,9 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	descriptorpb "google.golang.org/protobuf/types/descriptorpb"
+	anypb "google.golang.org/protobuf/types/known/anypb"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -20,6 +22,126 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+type ResponseWrapper struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Data          *anypb.Any             `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResponseWrapper) Reset() {
+	*x = ResponseWrapper{}
+	mi := &file_common_response_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResponseWrapper) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResponseWrapper) ProtoMessage() {}
+
+func (x *ResponseWrapper) ProtoReflect() protoreflect.Message {
+	mi := &file_common_response_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResponseWrapper.ProtoReflect.Descriptor instead.
+func (*ResponseWrapper) Descriptor() ([]byte, []int) {
+	return file_common_response_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ResponseWrapper) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *ResponseWrapper) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *ResponseWrapper) GetData() *anypb.Any {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ErrorWrapper struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Error         *ErrorDetails          `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ErrorWrapper) Reset() {
+	*x = ErrorWrapper{}
+	mi := &file_common_response_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ErrorWrapper) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ErrorWrapper) ProtoMessage() {}
+
+func (x *ErrorWrapper) ProtoReflect() protoreflect.Message {
+	mi := &file_common_response_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ErrorWrapper.ProtoReflect.Descriptor instead.
+func (*ErrorWrapper) Descriptor() ([]byte, []int) {
+	return file_common_response_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ErrorWrapper) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *ErrorWrapper) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *ErrorWrapper) GetError() *ErrorDetails {
+	if x != nil {
+		return x.Error
+	}
+	return nil
+}
 
 var file_common_response_proto_extTypes = []protoimpl.ExtensionInfo{
 	{
@@ -42,21 +164,48 @@ var File_common_response_proto protoreflect.FileDescriptor
 
 const file_common_response_proto_rawDesc = "" +
 	"\n" +
-	"\x15common/response.proto\x12\x06common\x1a google/protobuf/descriptor.proto:L\n" +
+	"\x15common/response.proto\x12\x06common\x1a google/protobuf/descriptor.proto\x1a\x19google/protobuf/any.proto\x1a\x12common/error.proto\"i\n" +
+	"\x0fResponseWrapper\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12(\n" +
+	"\x04data\x18\x03 \x01(\v2\x14.google.protobuf.AnyR\x04data\"h\n" +
+	"\fErrorWrapper\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\x12*\n" +
+	"\x05error\x18\x03 \x01(\v2\x14.common.ErrorDetailsR\x05error:L\n" +
 	"\x10response_message\x12\x1f.google.protobuf.MessageOptions\x18ц\x03 \x01(\tR\x0fresponseMessageB\x83\x01\n" +
 	"\n" +
 	"com.commonB\rResponseProtoP\x01Z.github.com/ming-0x0/scaffold/api/gen/go/common\xa2\x02\x03CXX\xaa\x02\x06Common\xca\x02\x06Common\xe2\x02\x12Common\\GPBMetadata\xea\x02\x06Commonb\x06proto3"
 
+var (
+	file_common_response_proto_rawDescOnce sync.Once
+	file_common_response_proto_rawDescData []byte
+)
+
+func file_common_response_proto_rawDescGZIP() []byte {
+	file_common_response_proto_rawDescOnce.Do(func() {
+		file_common_response_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_common_response_proto_rawDesc), len(file_common_response_proto_rawDesc)))
+	})
+	return file_common_response_proto_rawDescData
+}
+
+var file_common_response_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_common_response_proto_goTypes = []any{
-	(*descriptorpb.MessageOptions)(nil), // 0: google.protobuf.MessageOptions
+	(*ResponseWrapper)(nil),             // 0: common.ResponseWrapper
+	(*ErrorWrapper)(nil),                // 1: common.ErrorWrapper
+	(*anypb.Any)(nil),                   // 2: google.protobuf.Any
+	(*ErrorDetails)(nil),                // 3: common.ErrorDetails
+	(*descriptorpb.MessageOptions)(nil), // 4: google.protobuf.MessageOptions
 }
 var file_common_response_proto_depIdxs = []int32{
-	0, // 0: common.response_message:extendee -> google.protobuf.MessageOptions
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	0, // [0:1] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: common.ResponseWrapper.data:type_name -> google.protobuf.Any
+	3, // 1: common.ErrorWrapper.error:type_name -> common.ErrorDetails
+	4, // 2: common.response_message:extendee -> google.protobuf.MessageOptions
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	2, // [2:3] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_common_response_proto_init() }
@@ -64,18 +213,20 @@ func file_common_response_proto_init() {
 	if File_common_response_proto != nil {
 		return
 	}
+	file_common_error_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_common_response_proto_rawDesc), len(file_common_response_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   2,
 			NumExtensions: 1,
 			NumServices:   0,
 		},
 		GoTypes:           file_common_response_proto_goTypes,
 		DependencyIndexes: file_common_response_proto_depIdxs,
+		MessageInfos:      file_common_response_proto_msgTypes,
 		ExtensionInfos:    file_common_response_proto_extTypes,
 	}.Build()
 	File_common_response_proto = out.File

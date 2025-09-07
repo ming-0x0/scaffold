@@ -7,7 +7,7 @@ import (
 )
 
 //go:generate stringer -type=ErrorCode
-type ErrorCode int64
+type ErrorCode int32
 
 const (
 	OK ErrorCode = iota

@@ -3,55 +3,45 @@ package repository
 import (
 	"context"
 	"errors"
-	"fmt"
-	"strings"
 
 	"github.com/ming-0x0/scaffold/internal/shared/domainerror"
+	"github.com/ming-0x0/scaffold/internal/shared/repository/condition"
 	"github.com/ming-0x0/scaffold/internal/shared/transaction"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 const (
-	DefaultPage    int64 = 1
-	DefaultPerPage int64 = 20
+	DefaultPage    int32 = 1
+	DefaultPerPage int32 = 20
 )
 
 type Domain interface {
 	Validate() error
 }
 
-type Condition func(*gorm.DB) *gorm.DB
-
 type RepositoryInterface[D Domain] interface {
 	FindByConditionsWithPagination(
 		ctx context.Context,
-		pageData map[string]int64,
-		conditions ...Condition,
-	) ([]D, int64, error)
+		pageData map[string]int32,
+		conditions ...condition.Condition,
+	) ([]D, int32, error)
 	TakeByConditions(
 		ctx context.Context,
-		conditions ...Condition,
+		conditions ...condition.Condition,
 	) (D, error)
 	DeleteByConditions(
 		ctx context.Context,
-		conditions ...Condition,
+		conditions ...condition.Condition,
 	) error
 	FindByConditions(
 		ctx context.Context,
-		conditions ...Condition,
+		conditions ...condition.Condition,
 	) ([]D, error)
 	Save(
 		ctx context.Context,
 		domain D,
 	) error
-	PreloadAssociations() Condition
-	EQ(key string, value any) Condition
-	NEQ(key string, value any) Condition
-	LIKE(key string, value any) Condition
-	OR(conditions ...Condition) Condition
-	IN(key string, values []any) Condition
 }
 
 type Repository[D Domain] struct {
@@ -79,7 +69,7 @@ func (r *Repository[D]) DB(ctx context.Context) *gorm.DB {
 	return r.db.WithContext(ctx)
 }
 
-func (r *Repository[D]) scopes(conditions []Condition) []func(*gorm.DB) *gorm.DB {
+func (r *Repository[D]) scopes(conditions []condition.Condition) []func(*gorm.DB) *gorm.DB {
 	scopes := make([]func(*gorm.DB) *gorm.DB, len(conditions))
 	for i, condition := range conditions {
 		scopes[i] = condition
@@ -88,7 +78,7 @@ func (r *Repository[D]) scopes(conditions []Condition) []func(*gorm.DB) *gorm.DB
 	return scopes
 }
 
-func (r *Repository[D]) pagination(pageData map[string]int64) func(*gorm.DB) *gorm.DB {
+func (r *Repository[D]) pagination(pageData map[string]int32) func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		page := DefaultPage
 		if valPage, ok := pageData["page"]; ok && valPage > 0 {
@@ -107,7 +97,7 @@ func (r *Repository[D]) pagination(pageData map[string]int64) func(*gorm.DB) *go
 
 func (r *Repository[D]) FindByConditions(
 	ctx context.Context,
-	conditions ...Condition,
+	conditions ...condition.Condition,
 ) ([]D, error) {
 	var domains []D
 	if err := r.DB(ctx).Scopes(r.scopes(conditions)...).Find(&domains).Error; err != nil {
@@ -126,7 +116,7 @@ func (r *Repository[D]) FindByConditions(
 
 func (r *Repository[D]) TakeByConditions(
 	ctx context.Context,
-	conditions ...Condition,
+	conditions ...condition.Condition,
 ) (D, error) {
 	var domain D
 	err := r.DB(ctx).Scopes(r.scopes(conditions)...).Take(&domain).Error
@@ -165,7 +155,7 @@ func (r *Repository[D]) Save(
 
 func (r *Repository[D]) DeleteByConditions(
 	ctx context.Context,
-	conditions ...Condition,
+	conditions ...condition.Condition,
 ) error {
 	var domain D
 	err := r.DB(ctx).Scopes(r.scopes(conditions)...).Delete(&domain).Error
@@ -178,9 +168,9 @@ func (r *Repository[D]) DeleteByConditions(
 
 func (r *Repository[D]) FindByConditionsWithPagination(
 	ctx context.Context,
-	pageData map[string]int64,
-	conditions ...Condition,
-) ([]D, int64, error) {
+	pageData map[string]int32,
+	conditions ...condition.Condition,
+) ([]D, int32, error) {
 	cdb := r.DB(ctx)
 
 	var domains []D
@@ -202,70 +192,9 @@ func (r *Repository[D]) FindByConditionsWithPagination(
 	for _, domain := range domains {
 		err := domain.Validate()
 		if err != nil {
-			return domains, count, err
+			return domains, 0, err
 		}
 	}
 
-	return domains, count, nil
-}
-
-func (r *Repository[D]) PreloadAssociations() Condition {
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Preload(clause.Associations)
-	}
-}
-
-func (r *Repository[D]) EQ(column string, value any) Condition {
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(fmt.Sprintf("%s = ?", column), value)
-	}
-}
-
-func (r *Repository[D]) NEQ(column string, value any) Condition {
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(fmt.Sprintf("%s <> ?", column), value)
-	}
-}
-
-func (r *Repository[D]) LIKE(column string, value any) Condition {
-	return func(db *gorm.DB) *gorm.DB {
-		escapedValue := "%" + strings.NewReplacer(
-			"\\", "\\\\",
-			"%", "\\%",
-			"_", "\\_",
-		).Replace(fmt.Sprint(value)) + "%"
-
-		return db.Where(
-			fmt.Sprintf("LOWER(%s) LIKE LOWER(?) ESCAPE '\\\\'", column),
-			escapedValue,
-		)
-	}
-}
-
-func (r *Repository[D]) OR(conditions ...Condition) Condition {
-	return func(db *gorm.DB) *gorm.DB {
-		if len(conditions) == 0 {
-			return db
-		}
-
-		query := conditions[0](db)
-
-		for _, cond := range conditions[1:] {
-			query = query.Or(cond(db))
-		}
-
-		return query
-	}
-}
-
-func (r *Repository[D]) IN(column string, values []any) Condition {
-	if len(values) == 0 {
-		return func(db *gorm.DB) *gorm.DB {
-			return db
-		}
-	}
-
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(fmt.Sprintf("%s IN (?)", column), values)
-	}
+	return domains, int32(count), nil
 }

@@ -10,7 +10,7 @@ import (
 // ResourcesTableName TableName
 var ResourcesTableName = "resources"
 
-type ResourceType int64
+type ResourceType int32
 
 const (
 	ResourceTypeImage ResourceType = iota + 1
@@ -18,7 +18,7 @@ const (
 )
 
 type Resource struct {
-	ID          int64                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
+	ID          int32                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
 	Name        string                      `gorm:"column:name;type:varchar(255);not null;unique" mapstructure:"name"`
 	Description undefined.Undefined[string] `gorm:"column:description;type:longtext" mapstructure:"description"`
 	Type        ResourceType                `gorm:"column:type;type:bigint;not null" mapstructure:"type"`

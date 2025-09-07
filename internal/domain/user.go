@@ -10,7 +10,7 @@ import (
 // UsersTableName TableName
 var UsersTableName = "users"
 
-type UserStatus int64
+type UserStatus int32
 
 const (
 	UserStatusActive UserStatus = iota + 1
@@ -18,7 +18,7 @@ const (
 )
 
 type User struct {
-	ID                int64           `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
+	ID                int32           `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
 	FullName          string          `gorm:"column:full_name;type:varchar(50);not null" mapstructure:"full_name"`
 	Email             string          `gorm:"column:email;type:varchar(255);not null;unique" mapstructure:"email"`
 	Username          string          `gorm:"column:username;type:varchar(50);not null;unique" mapstructure:"username"`
@@ -26,7 +26,7 @@ type User struct {
 	IsAdmin           bool            `gorm:"column:is_admin;type:tinyint(1);not null;default:0" mapstructure:"is_admin"`
 	Status            UserStatus      `gorm:"column:status;type:integer;not null;default:1" mapstructure:"status"`                  // 1: active, 2: inactive
 	ReceiveEmail      bool            `gorm:"column:receive_email;type:tinyint(1);not null;default:0" mapstructure:"receive_email"` // 0: no, 1: yes
-	PermissionGroupID int64           `gorm:"column:permission_group_id;type:bigint;not null" mapstructure:"permission_group_id"`
+	PermissionGroupID int32           `gorm:"column:permission_group_id;type:bigint;not null" mapstructure:"permission_group_id"`
 	PermissionGroup   PermissionGroup `gorm:"foreignKey:PermissionGroupID"`
 	BaseDomain
 }

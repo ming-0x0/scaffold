@@ -5,15 +5,15 @@ package web.v1;
 option go_package = "github.com/ming-0x0/scaffold/api/gen/go/web/v1";
 
 message Banner {
-  int64 id = 1;
+  int32 id = 1;
   string name_vi = 2;
   string name_en = 3;
   string name_zh = 4;
   optional string description_vi = 5;
   optional string description_en = 6;
   optional string description_zh = 7;
-  optional int64 position = 8;
-  optional int64 status = 9;
+  optional int32 position = 8;
+  optional int32 status = 9;
   string resource_id = 10;
   optional string link = 11;
   optional string button_name_vi = 12;

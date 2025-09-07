@@ -11,14 +11,14 @@ import (
 // CustomersTableName TableName
 var CustomersTableName = "customers"
 
-type CustomerStatus int64
+type CustomerStatus int32
 
 const (
 	CustomerStatusActive   CustomerStatus = 1 // đã trả lời
 	CustomerStatusInactive CustomerStatus = 2 // chưa trả lời
 )
 
-type ServiceType int64
+type ServiceType int32
 
 const (
 	ServiceTypeTuyenDung ServiceType = 1
@@ -28,7 +28,7 @@ const (
 
 // Customer struct
 type Customer struct {
-	ID           int64                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
+	ID           int32                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
 	CustomerName string                      `gorm:"column:customer_name;type:text;not null" mapstructure:"customer_name"`
 	Email        string                      `gorm:"column:email;type:text;not null" mapstructure:"email"`
 	PhoneNumber  string                      `gorm:"column:phone_number;type:text;not null" mapstructure:"phone_number"`
