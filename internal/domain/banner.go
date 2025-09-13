@@ -27,7 +27,7 @@ const (
 	CourseRefBannerType  BannerType = 5
 )
 
-//go:generate go run ../../cmd/fieldgen/main.go -struct=Banner -input=banner.go -output=../adapter/banner/banner_columns.go
+//go:generate go run ../../cmd/fieldgen/main.go -struct=Banner -input=banner.go -output=../adapter/banner/banner_columns.go -table=banners -package=columns
 type Banner struct {
 	ID            int32                       `gorm:"column:id;primaryKey;type:bigint;not null;autoIncrement" mapstructure:"id"`
 	NameVi        string                      `gorm:"column:name_vi;type:text;not null" mapstructure:"name_vi"`
