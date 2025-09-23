@@ -30,11 +30,12 @@ func NEQ(column string, value any) Condition {
 
 func LIKE(column string, value any) Condition {
 	return func(db *gorm.DB) *gorm.DB {
+		trimmed := strings.TrimSpace(fmt.Sprint(value))
 		escapedValue := "%" + strings.NewReplacer(
 			"\\", "\\\\",
 			"%", "\\%",
 			"_", "\\_",
-		).Replace(fmt.Sprint(value)) + "%"
+		).Replace(trimmed) + "%"
 
 		return db.Where(
 			fmt.Sprintf("LOWER(%s) LIKE LOWER(?) ESCAPE '\\\\'", column),
@@ -68,5 +69,11 @@ func IN(column string, values []any) Condition {
 
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where(fmt.Sprintf("%s IN (?)", column), values)
+	}
+}
+
+func IsNull(column string) Condition {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where(fmt.Sprintf("%s IS NULL", column))
 	}
 }

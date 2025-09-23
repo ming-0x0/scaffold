@@ -44,7 +44,7 @@ func (h *BannerHandler) GetListBanner(ctx context.Context, req *portalv1.GetList
 		)
 	}
 
-	banners, total, err := bannerRepo.FindByConditionsWithPagination(
+	banners, total, err := bannerRepo.FindPaginatedByConditions(
 		ctx,
 		pageData,
 		conditions...,

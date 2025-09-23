@@ -21,7 +21,7 @@ type Domain interface {
 }
 
 type RepositoryInterface[D Domain] interface {
-	FindByConditionsWithPagination(
+	FindPaginatedByConditions(
 		ctx context.Context,
 		pageData map[string]int32,
 		conditions ...condition.Condition,
@@ -78,7 +78,7 @@ func (r *Repository[D]) scopes(conditions []condition.Condition) []func(*gorm.DB
 	return scopes
 }
 
-func (r *Repository[D]) pagination(pageData map[string]int32) func(*gorm.DB) *gorm.DB {
+func (r *Repository[D]) paginate(pageData map[string]int32) func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		page := DefaultPage
 		if valPage, ok := pageData["page"]; ok && valPage > 0 {
@@ -166,7 +166,7 @@ func (r *Repository[D]) DeleteByConditions(
 	return nil
 }
 
-func (r *Repository[D]) FindByConditionsWithPagination(
+func (r *Repository[D]) FindPaginatedByConditions(
 	ctx context.Context,
 	pageData map[string]int32,
 	conditions ...condition.Condition,
@@ -177,7 +177,7 @@ func (r *Repository[D]) FindByConditionsWithPagination(
 	var count int64
 
 	countBuilder := cdb.Model(&domains)
-	queryBuilder := cdb.Scopes(r.pagination(pageData))
+	queryBuilder := cdb.Scopes(r.paginate(pageData))
 
 	err := countBuilder.Scopes(r.scopes(conditions)...).Count(&count).Error
 	if err != nil {
