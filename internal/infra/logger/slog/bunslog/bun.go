@@ -4,17 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log/slog"
+	"os"
 	"time"
 
-	sloglogger "github.com/ming-0x0/scaffold/internal/infra/logger/slog"
-	"github.com/sirupsen/logrus"
 	"github.com/uptrace/bun"
 )
 
 type Logger struct {
-	Logger            *sloglogger.Logger
+	Logger            *slog.Logger
 	SlowThreshold     time.Duration
 	IgnoreNoRowsError bool
 	LogLevel          slog.Level
@@ -22,10 +20,14 @@ type Logger struct {
 
 func New(opts Logger) *Logger {
 	if opts.Logger == nil {
-		opts.Logger = sloglogger.New()
+		opts.Logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level:       slog.LevelInfo,
+			AddSource:   true,
+			ReplaceAttr: nil,
+		}))
 	}
 
-	if opts.LogLevel > 0 {
+	if opts.LogLevel == 0 {
 		opts.LogLevel = slog.LevelInfo
 	}
 
@@ -41,35 +43,40 @@ func (l *Logger) BeforeQuery(ctx context.Context, event *bun.QueryEvent) context
 func (l *Logger) AfterQuery(ctx context.Context, event *bun.QueryEvent) {
 	elapsed := time.Since(event.StartTime)
 
-	fields := logrus.Fields{}
-	fields["durations"] = elapsed.String()
+	attrs := []slog.Attr{
+		slog.String("durations", elapsed.String()),
+		slog.String("sql", event.Query),
+	}
 
-	fields["sql"] = event.Query
-
-	if len(event.QueryArgs) > 0 {
-		args := make([]string, 0, len(event.QueryArgs))
-		for _, arg := range event.QueryArgs {
-			args = append(args, fmt.Sprintf("%v", arg))
-		}
-		fields["args"] = args
+	rows, err := event.Result.RowsAffected()
+	if err != nil {
+		attrs = append(attrs, slog.String("rows", "-"))
+	} else {
+		attrs = append(attrs, slog.Int64("rows", rows))
 	}
 
 	if event.Err != nil {
-		fields["error"] = event.Err.Error()
+		attrs = append(attrs, slog.String("error", event.Err.Error()))
+	}
+
+	// Create a new logger with all attributes
+	logger := l.Logger
+	for _, attr := range attrs {
+		logger = logger.With(attr.Key, attr.Value.Any())
 	}
 
 	switch {
 	case event.Err != nil && (!errors.Is(event.Err, sql.ErrNoRows) || !l.IgnoreNoRowsError):
 		if l.LogLevel >= sloglogger.Error {
-			l.Logger.WithContext(ctx).WithFields(fields).Error("SQL Query failed")
+			logger.ErrorContext(ctx, "SQL Query failed", "query", event.Query, "duration", elapsed, "rows", rows, "error", event.Err)
 		}
 	case l.SlowThreshold != 0 && elapsed > l.SlowThreshold:
-		if l.LogLevel >= slog.WarnLevel {
-			l.Logger.WithContext(ctx).WithFields(fields).Warn("Performed SLOW SQL Query")
+		if l.LogLevel >= sloglogger.Warn {
+			logger.WarnContext(ctx, "Performed SLOW SQL Query", "query", event.Query, "duration", elapsed, "rows", rows)
 		}
 	default:
-		if l.LogLevel >= logrus.InfoLevel {
-			l.Logger.WithContext(ctx).WithFields(fields).Info("Performed SQL Query")
+		if l.LogLevel >= sloglogger.Info {
+			logger.InfoContext(ctx, "Performed SQL Query", "query", event.Query, "duration", elapsed, "rows", rows)
 		}
 	}
 }
