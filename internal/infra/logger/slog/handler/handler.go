@@ -1,4 +1,4 @@
-package sloglogger
+package handler
 
 import (
 	"bytes"
@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"os"
 	"sync"
 )
 
@@ -46,34 +45,34 @@ func (h *Handler) Handle(ctx context.Context, r slog.Record) error {
 		return fmt.Errorf("error when unmarshaling attrs: %w", err)
 	}
 
-	bytes, err := json.MarshalIndent(attrs, "", " ")
+	bytes, err := json.MarshalIndent(attrs, "", "  ")
 	if err != nil {
 		return fmt.Errorf("error when marshaling attrs: %w", err)
 	}
-
 	bytes = append(bytes, byte('\n'))
 
-	if _, err = h.writer.Write(bytes); err != nil {
+	if _, err := h.writer.Write(bytes); err != nil {
 		return fmt.Errorf("error when writing attrs: %w", err)
 	}
 
 	return nil
 }
 
-func NewJSONHandler(opts *slog.HandlerOptions) *Handler {
+func NewJSONHandler(writer io.Writer, opts *slog.HandlerOptions) *Handler {
 	if opts == nil {
 		opts = &slog.HandlerOptions{}
 	}
+
 	buffer := &bytes.Buffer{}
 	handler := &Handler{
 		buffer: buffer,
 		handler: slog.NewJSONHandler(buffer, &slog.HandlerOptions{
 			Level:       opts.Level,
-			AddSource:   opts.AddSource,
+			AddSource:   true,
 			ReplaceAttr: opts.ReplaceAttr,
 		}),
 		mutex:  &sync.Mutex{},
-		writer: os.Stdout,
+		writer: writer,
 	}
 
 	return handler

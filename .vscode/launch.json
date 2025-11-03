@@ -6,7 +6,7 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/cmd/scaffold/main.go",
+      "program": "${workspaceFolder}/cmd/standalone/main.go",
       "cwd": "${workspaceFolder}",
       "envFile": "${workspaceFolder}/.env"
     },
