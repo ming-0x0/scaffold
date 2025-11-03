@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/joho/godotenv/autoload"
 	sloglogger "github.com/ming-0x0/scaffold/internal/infra/logger/slog"
 	"github.com/ming-0x0/scaffold/internal/infra/logger/slog/bunslog"
 	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/dialect/sqlitedialect"
-	"github.com/uptrace/bun/driver/sqliteshim"
+    "github.com/uptrace/bun/dialect/pgdialect"
+    "github.com/uptrace/bun/driver/pgdriver"
+
 )
 
 func main() {
@@ -19,13 +21,12 @@ func main() {
 	ctx := context.Background()
 
 	// Open database
-	sqldb, err := sql.Open(sqliteshim.ShimName, "file::memory:")
-	if err != nil {
-		panic(err)
-	}
+	sqldb := sql.OpenDB(pgdriver.NewConnector(
+		pgdriver.WithDSN("postgres://scaffold:password@localhost:5432/scaffold?sslmode=disable"),
+	))
+	db := bun.NewDB(sqldb, pgdialect.New())
 
 	// Create Bun instance
-	db := bun.NewDB(sqldb, sqlitedialect.New())
 	db.AddQueryHook(bunslog.New(bunslog.Logger{
 		Logger:            logger,
 		SlowThreshold:     time.Second,
@@ -47,6 +48,9 @@ func main() {
 	db.NewInsert().Model(user).Exec(ctx)
 
 	// Query user
-	err = db.NewSelect().Model(user).Where("id = ?", user.ID).Scan(ctx)
+	err := db.NewSelect().Model(user).Where("id = ?", user.ID).Scan(ctx)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Printf("User: %+v\n", user)
 }

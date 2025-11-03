@@ -26,12 +26,12 @@ func (h *RequestIDHandler) Enabled(ctx context.Context, r slog.Level) bool {
 	return h.handler.Enabled(ctx, r)
 }
 
-func (h *RequestIDHandler) WithAttrs(_ []slog.Attr) slog.Handler {
-	return &RequestIDHandler{handler: h.handler}
+func (h *RequestIDHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	return &RequestIDHandler{handler: h.handler.WithAttrs(attrs)}
 }
 
-func (h *RequestIDHandler) WithGroup(_ string) slog.Handler {
-	return &RequestIDHandler{handler: h.handler}
+func (h *RequestIDHandler) WithGroup(name string) slog.Handler {
+	return &RequestIDHandler{handler: h.handler.WithGroup(name)}
 }
 
 func WithRequestID(handler slog.Handler) slog.Handler {

@@ -5,14 +5,15 @@ import (
 	"database/sql"
 	"errors"
 	"log/slog"
-	"os"
+	"strings"
 	"time"
 
+	sloglogger "github.com/ming-0x0/scaffold/internal/infra/logger/slog"
 	"github.com/uptrace/bun"
 )
 
 type Logger struct {
-	Logger            *slog.Logger
+	Logger            *sloglogger.Logger
 	SlowThreshold     time.Duration
 	IgnoreNoRowsError bool
 	LogLevel          slog.Level
@@ -20,14 +21,10 @@ type Logger struct {
 
 func New(opts Logger) *Logger {
 	if opts.Logger == nil {
-		opts.Logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-			Level:       slog.LevelInfo,
-			AddSource:   true,
-			ReplaceAttr: nil,
-		}))
+		opts.Logger = sloglogger.New()
 	}
 
-	if opts.LogLevel == 0 {
+	if opts.LogLevel < 0 {
 		opts.LogLevel = slog.LevelInfo
 	}
 
@@ -48,11 +45,13 @@ func (l *Logger) AfterQuery(ctx context.Context, event *bun.QueryEvent) {
 		slog.String("sql", event.Query),
 	}
 
-	rows, err := event.Result.RowsAffected()
-	if err != nil {
-		attrs = append(attrs, slog.String("rows", "-"))
-	} else {
-		attrs = append(attrs, slog.Int64("rows", rows))
+	if event.Result != nil {
+		rows, err := event.Result.RowsAffected()
+		if err != nil {
+			attrs = append(attrs, slog.String("rows", "-"))
+		} else {
+			attrs = append(attrs, slog.Int64("rows", rows))
+		}
 	}
 
 	if event.Err != nil {
@@ -60,7 +59,7 @@ func (l *Logger) AfterQuery(ctx context.Context, event *bun.QueryEvent) {
 	}
 
 	// Create a new logger with all attributes
-	logger := l.Logger
+	logger := l.Logger.WithGroup("bun")
 	for _, attr := range attrs {
 		logger = logger.With(attr.Key, attr.Value.Any())
 	}
@@ -68,15 +67,41 @@ func (l *Logger) AfterQuery(ctx context.Context, event *bun.QueryEvent) {
 	switch {
 	case event.Err != nil && (!errors.Is(event.Err, sql.ErrNoRows) || !l.IgnoreNoRowsError):
 		if l.LogLevel >= sloglogger.Error {
-			logger.ErrorContext(ctx, "SQL Query failed", "query", event.Query, "duration", elapsed, "rows", rows, "error", event.Err)
+			logger.ErrorContext(ctx, "SQL Query failed")
 		}
 	case l.SlowThreshold != 0 && elapsed > l.SlowThreshold:
 		if l.LogLevel >= sloglogger.Warn {
-			logger.WarnContext(ctx, "Performed SLOW SQL Query", "query", event.Query, "duration", elapsed, "rows", rows)
+			logger.WarnContext(ctx, "Performed SLOW SQL Query")
 		}
 	default:
 		if l.LogLevel >= sloglogger.Info {
-			logger.InfoContext(ctx, "Performed SQL Query", "query", event.Query, "duration", elapsed, "rows", rows)
+			logger.InfoContext(ctx, "Performed SQL Query")
 		}
 	}
+}
+
+// formatSQLInline cleans SQL so it can be copied directly into a SQL client.
+func formatSQLInline(query, dialect string) string {
+	query = strings.TrimSpace(query)
+	query = strings.ReplaceAll(query, "\n", " ")
+	query = strings.ReplaceAll(query, "\r", " ")
+	query = strings.Join(strings.Fields(query), " ")
+
+	switch dialect {
+	case "mysql":
+		// MySQL dùng backtick (`) cho tên bảng/cột
+		query = strings.ReplaceAll(query, "\"", "`")
+	case "postgres", "postgresql":
+		// PostgreSQL dùng double quotes (")
+		query = strings.ReplaceAll(query, "\"", "")
+		query = strings.ReplaceAll(query, "`", "\"")
+	default:
+		// giữ nguyên
+	}
+
+	if !strings.HasSuffix(query, ";") {
+		query += ";"
+	}
+
+	return query
 }
