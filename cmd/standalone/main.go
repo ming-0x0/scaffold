@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/joho/godotenv/autoload"
 	bunDB "github.com/ming-0x0/scaffold/internal/infra/db"
 	sloglogger "github.com/ming-0x0/scaffold/internal/infra/logger/slog"

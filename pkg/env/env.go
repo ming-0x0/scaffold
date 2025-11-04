@@ -5,6 +5,30 @@ import (
 	"strconv"
 )
 
+type Env string
+
+const (
+	Local Env = "local"
+	Dev   Env = "dev"
+	Stg   Env = "stg"
+	Prod  Env = "prod"
+)
+
+func GetEnv() Env {
+	switch os.Getenv("ENV") {
+	case "local":
+		return Local
+	case "dev":
+		return Dev
+	case "stg":
+		return Stg
+	case "prod":
+		return Prod
+	default:
+		return Local
+	}
+}
+
 func GetString(key string, fallback string) string {
 	value := os.Getenv(key)
 	if value == "" {
