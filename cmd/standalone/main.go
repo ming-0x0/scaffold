@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"net/http"
 
+	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"
 	bunDB "github.com/ming-0x0/scaffold/internal/infra/db"
 	sloglogger "github.com/ming-0x0/scaffold/internal/infra/logger/slog"
@@ -39,5 +40,19 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("User: %+v\n", user)
+	router := gin.Default()
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{"message": "Hello World"})
+	})
+
+	router.GET("/users", func(c *gin.Context) {
+		c.JSON(http.StatusOK, user)
+	})
+
+	err = router.Run(":8080")
+	if err != nil {
+		panic(err)
+	}
+
+	logger.Info("Server started on :8080")
 }
