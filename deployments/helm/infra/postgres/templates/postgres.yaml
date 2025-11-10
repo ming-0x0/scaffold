@@ -34,7 +34,7 @@ metadata:
   name: {{ include "postgres.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
-  serviceName: {{ include "postgres.fullname" . }}-service
+  serviceName: {{ include "postgres.fullname" . }}-stateful
   replicas: 1
   selector:
     matchLabels:
@@ -60,7 +60,8 @@ spec:
         name: postgres-data
       spec:
         storageClassName: manual
-        accessModes: ["ReadWriteOnce"]
+        accessModes:
+          - ReadWriteOnce
         resources:
           requests:
             storage: 10Gi
