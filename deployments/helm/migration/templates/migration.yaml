@@ -1,0 +1,73 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "migration.fullname" . }}
+  labels: {{ include "migration.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.migration.image.repository }}:{{ .Values.migration.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.migration.image.pullPolicy }}
+          env:
+            - name: DATABASE_URL
+              value: "{{ .Values.database.url }}"
+            - name: MIGRATION_DIR
+              value: "{{ .Values.migration.dir }}"
+            - name: PG_HOST
+              value: "{{ .Values.database.host }}"
+            - name: PG_PORT
+              value: "{{ .Values.database.port }}"
+            - name: PG_ADMIN_USER
+              value: "{{ .Values.database.admin.user }}"
+            - name: PG_ADMIN_PASSWORD
+              value: "{{ .Values.database.admin.password }}"
+            - name: DB_USER
+              value: "{{ .Values.database.user }}"
+            - name: DB_PASSWORD
+              value: "{{ .Values.database.password }}"
+            - name: DB_NAME
+              value: "{{ .Values.database.name }}"
+
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              echo "Waiting for PostgreSQL..."
+              until PGPASSWORD=$PG_ADMIN_PASSWORD pg_isready -h $PG_HOST -p $PG_PORT -U $PG_ADMIN_USER; do
+                sleep 2
+              done
+              echo "PostgreSQL is ready."
+
+              # Check & create role
+              EXISTS_USER=$(PGPASSWORD=$PG_ADMIN_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_ADMIN_USER -tAc "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'")
+              if [ "$EXISTS_USER" != "1" ]; then
+                echo "Creating role $DB_USER"
+                PGPASSWORD=$PG_ADMIN_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_ADMIN_USER -c "CREATE ROLE $DB_USER WITH LOGIN PASSWORD '$DB_PASSWORD';"
+              else
+                echo "Role already exists"
+              fi
+
+              # Check & create database
+              EXISTS_DB=$(PGPASSWORD=$PG_ADMIN_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_ADMIN_USER -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'")
+              if [ "$EXISTS_DB" != "1" ]; then
+                echo "Creating database $DB_NAME"
+                PGPASSWORD=$PG_ADMIN_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_ADMIN_USER -c \
+                  "CREATE DATABASE $DB_NAME WITH OWNER $DB_USER ENCODING 'UTF8' LC_COLLATE='vi_VN.utf8' LC_CTYPE='vi_VN.utf8' TEMPLATE template0;"
+              else
+                echo "Database already exists"
+              fi
+
+              echo "Granting privileges"
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_ADMIN_USER -d $DB_NAME -c \
+                "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
+
+              echo "Starting migration..."
+

@@ -1,0 +1,25 @@
+# Image của migration container
+migration:
+  image:
+    repository: migration
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  dir: "/migrations" # thư mục chứa file .sql trong image
+
+# Cấu hình database
+database:
+  host: "postgres-service.infra.svc.cluster.local" # service name của PostgreSQL trong cluster
+  port: "5432"
+
+  # user/app chính sẽ chạy goose
+  user: "scaffold"
+  password: "password"
+  name: "scaffold"
+
+  # user admin dùng để tạo user & database (thường là postgres)
+  admin:
+    user: "postgres"
+    password: "postgres"
+
+  # Goose URL để chạy migration
+  url: "postgres://scaffold:password@postgres.infra.svc.cluster.local:5432/scaffold?sslmode=disable"
