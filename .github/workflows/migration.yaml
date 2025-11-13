@@ -1,0 +1,55 @@
+name: DB Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      migrate:
+        description: "Migration mode"
+        required: true
+        type: choice
+        default: "up"
+        options:
+          - up
+          - down
+          - down-to
+      down_to:
+        description: "Version to rollback (only for down-to)"
+        required: false
+        default: "0"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: "latest"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "latest"
+
+      - name: Load kubeconfig (NO SSH NEEDED)
+        run: |
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > kubeconfig
+          export KUBECONFIG=./kubeconfig
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Helm upgrade + migration
+        run: |
+          helm upgrade --install migration ./deployments/helm/migration \
+            --namespace default \
+            --set migration.direction=${{ github.event.inputs.migrate }} \
+            --set migration.downTo=${{ github.event.inputs.down_to }}
+
+      - name: Show migration job logs
+        run: |
+          JOB=$(kubectl get jobs -n default | grep migration-migration | awk '{print $1}')
+          kubectl logs job/$JOB -n default --tail=100 || true

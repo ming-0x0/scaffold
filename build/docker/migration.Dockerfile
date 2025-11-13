@@ -6,5 +6,5 @@ RUN curl -fsSL \
     https://raw.githubusercontent.com/pressly/goose/master/install.sh |\
     sh
 
-CMD ["goose", "-version"]
+COPY --link internal/infra/db/migrations /migrations
 

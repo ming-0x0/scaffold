@@ -1,7 +1,25 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "migration.fullname" . }}-secret
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "migration.labels" . | nindent 4 }}
+data:
+  POSTGRES_USER: {{ b64enc .Values.database.admin.user }}
+  POSTGRES_PASSWORD: {{ b64enc .Values.database.admin.password }}
+  POSTGRES_DB: {{ b64enc .Values.database.name }}
+  DB_USER: {{ b64enc .Values.database.user }}
+  DB_PASSWORD: {{ b64enc .Values.database.password }}
+  DB_NAME: {{ b64enc .Values.database.name }}
+  DATABASE_URL: {{ b64enc .Values.database.url }}
+
+---
+
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "migration.fullname" . }}
+  name: "{{ include "migration.fullname" . }}-{{ .Release.Revision }}"
   labels: {{ include "migration.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
@@ -70,4 +88,10 @@ spec:
                 "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
 
               echo "Starting migration..."
-
+              if [ "{{ .Values.migration.direction }}" = "down" ]; then
+                goose -dir {{ .Values.migration.dir }} postgres "$DATABASE_URL" down;
+              elif [ "{{ .Values.migration.direction }}" = "down-to" ]; then
+                goose -dir {{ .Values.migration.dir }} postgres "$DATABASE_URL" down-to {{ .Values.migration.downTo }};
+              else
+                goose -dir {{ .Values.migration.dir }} postgres "$DATABASE_URL" up;
+              fi
