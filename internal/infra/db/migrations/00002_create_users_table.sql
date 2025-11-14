@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
     full_name       VARCHAR(255),
     avatar_url      TEXT,
     is_active       BOOLEAN DEFAULT TRUE,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at      TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMP NOT NULL DEFAULT NOW()
 );
 -- +goose StatementEnd
 
