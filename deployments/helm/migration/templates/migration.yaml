@@ -87,6 +87,15 @@ spec:
               PGPASSWORD=$PG_ADMIN_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_ADMIN_USER -d $DB_NAME -c \
                 "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
 
+              echo "Granting schema privileges"
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_ADMIN_USER -d $DB_NAME -c \
+                "GRANT USAGE ON SCHEMA public TO $DB_USER;
+                GRANT CREATE ON SCHEMA public TO $DB_USER;"
+
+              echo "Fixing schema owner"
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_ADMIN_USER -d $DB_NAME -c \
+                "ALTER SCHEMA public OWNER TO $DB_USER;"
+
               echo "Starting migration..."
               if [ "{{ .Values.migration.direction }}" = "down" ]; then
                 goose -dir {{ .Values.migration.dir }} postgres "$DATABASE_URL" down;

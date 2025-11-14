@@ -25,13 +25,13 @@ func NewPostgreSQLDB(
 
 	config := &pgdriver.Config{
 		Network: "tcp",
-		Addr:    fmt.Sprintf("%s:%d", env.GetString("DB_HOST", "localhost"), env.GetInt("DB_PORT", 5432)),
+		Addr:    fmt.Sprintf("%s:%d", env.GetString("DB_HOST", "localhost"), env.GetInt("DB_PORT", 30032)),
 		Dialer: func(ctx context.Context, network string, addr string) (net.Conn, error) {
 			return net.Dial(network, addr)
 		},
-		User:     env.GetString("DB_USER", "scaffold"),
-		Password: env.GetString("DB_PASS", "password"),
-		Database: env.GetString("DB_NAME", "scaffold"),
+		User:     env.GetString("DB_USER", "postgres"),
+		Password: env.GetString("DB_PASS", "postgres"),
+		Database: env.GetString("DB_NAME", "postgres"),
 	}
 
 	db := bun.NewDB(sql.OpenDB(pgdriver.NewConnector(pgdriver.WithConfig(config))), pgdialect.New())
