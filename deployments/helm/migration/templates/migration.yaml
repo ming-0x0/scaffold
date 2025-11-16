@@ -6,16 +6,16 @@ metadata:
   labels:
     {{- include "migration.labels" . | nindent 4 }}
 type: Opaque
-data:
-  DATABASE_URL: {{ .Values.database.url | b64enc | quote }}
-  MIGRATION_DIR: {{ .Values.migration.dir | b64enc | quote }}
-  PG_HOST: {{ .Values.database.host | b64enc | quote }}
+stringData:
+  DATABASE_URL: {{ .Values.database.url }}
+  MIGRATION_DIR: {{ .Values.migration.dir }}
+  PG_HOST: {{ .Values.database.host }}
   PG_PORT: {{ .Values.database.port }}
-  PG_ADMIN_USER: {{ .Values.database.admin.user | b64enc | quote }}
-  PG_ADMIN_PASSWORD: {{ .Values.database.admin.password | b64enc | quote }}
-  DB_USER: {{ .Values.database.user | b64enc | quote }}
-  DB_PASSWORD: {{ .Values.database.password | b64enc | quote }}
-  DB_NAME: {{ .Values.database.name | b64enc | quote }}
+  PG_ADMIN_USER: {{ .Values.database.admin.user }}
+  PG_ADMIN_PASSWORD: {{ .Values.database.admin.password }}
+  DB_USER: {{ .Values.database.user }}
+  DB_PASSWORD: {{ .Values.database.password }}
+  DB_NAME: {{ .Values.database.name }}
 
 ---
 apiVersion: batch/v1
