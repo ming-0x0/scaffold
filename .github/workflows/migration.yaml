@@ -43,8 +43,6 @@ jobs:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/scaffold-migration
           tags: |
             type=raw,value=latest
-            type=sha,prefix={{branch}}-
-            type=raw,value=run-${{ github.run_number }}
           labels: |
             org.opencontainers.image.title=Scaffold Migration
             org.opencontainers.image.description=Database migration for Scaffold

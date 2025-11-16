@@ -10,7 +10,7 @@ stringData:
   DATABASE_URL: {{ .Values.database.url }}
   MIGRATION_DIR: {{ .Values.migration.dir }}
   PG_HOST: {{ .Values.database.host }}
-  PG_PORT: {{ .Values.database.port }}
+  PG_PORT: "{{ .Values.database.port }}"
   PG_ADMIN_USER: {{ .Values.database.admin.user }}
   PG_ADMIN_PASSWORD: {{ .Values.database.admin.password }}
   DB_USER: {{ .Values.database.user }}
