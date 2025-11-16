@@ -90,6 +90,8 @@ jobs:
           kubectl get nodes
 
       - name: Helm upgrade migration
+        env:
+          KUBECONFIG: ./kubeconfig
         run: |
           helm upgrade --install migration ./deployments/helm/migration \
             --namespace scaffold \
