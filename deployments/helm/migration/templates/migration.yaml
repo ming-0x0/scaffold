@@ -10,7 +10,7 @@ data:
   DATABASE_URL: {{ .Values.database.url | b64enc | quote }}
   MIGRATION_DIR: {{ .Values.migration.dir | b64enc | quote }}
   PG_HOST: {{ .Values.database.host | b64enc | quote }}
-  PG_PORT: {{ .Values.database.port | b64enc | quote }}
+  PG_PORT: {{ .Values.database.port | quote }}
   PG_ADMIN_USER: {{ .Values.database.admin.user | b64enc | quote }}
   PG_ADMIN_PASSWORD: {{ .Values.database.admin.password | b64enc | quote }}
   DB_USER: {{ .Values.database.user | b64enc | quote }}
