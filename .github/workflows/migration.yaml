@@ -111,17 +111,26 @@ jobs:
         env:
           KUBECONFIG: ./kubeconfig
         run: |
-          POD=$(kubectl get pods -n scaffold \
-            -l app=migration \
+          NAMESPACE=scaffold
+
+          JOB=$(kubectl get jobs -n $NAMESPACE \
             --sort-by=.metadata.creationTimestamp \
             -o jsonpath="{.items[-1].metadata.name}")
 
+          if [ -z "$JOB" ]; then
+            echo "No migration job found"
+            exit 1
+          fi
+
+          POD=$(kubectl get pods -n $NAMESPACE \
+            -l job-name=$JOB \
+            -o jsonpath="{.items[0].metadata.name}")
+
           if [ -z "$POD" ]; then
-            echo "No migration pod found"
+            echo "No pod found for job $JOB"
             exit 1
           fi
 
           echo "Migration Pod: $POD"
           echo "------ LOGS ------"
-
-          kubectl logs -n scaffold "$POD" --tail=200 || true
+          kubectl logs -n $NAMESPACE "$POD" --tail=200 || true
