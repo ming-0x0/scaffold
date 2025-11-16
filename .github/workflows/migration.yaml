@@ -18,21 +18,7 @@ on:
         default: "0"
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Validate inputs
-        run: |
-          if [[ "${{ github.event.inputs.migrate }}" == "down-to" ]]; then
-            if ! [[ "${{ github.event.inputs.down_to }}" =~ ^[0-9]+$ ]]; then
-              echo "Error: down_to must be a non-negative number (e.g., 0, 1, 2...)"
-              exit 1
-            fi
-            echo "Will rollback to version ${{ github.event.inputs.down_to }}"
-          fi
-
   build-and-push:
-    needs: validate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -79,43 +65,52 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/scaffold-migration:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/scaffold-migration:buildcache,mode=max
 
-  # deploy:
-  #   needs: build-and-push
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v5
-  #
-  #     - name: Install kubectl
-  #       uses: azure/setup-kubectl@v4
-  #       with:
-  #         version: "latest"
-  #
-  #     - name: Install Helm
-  #       uses: azure/setup-helm@v4
-  #       with:
-  #         version: "latest"
-  #
-  #     - name: Load kubeconfig
-  #       run: |
-  #         echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > kubeconfig
-  #         export KUBECONFIG=./kubeconfig
-  #         kubectl cluster-info
-  #         kubectl get nodes
-  #
-  #     - name: Helm upgrade migration
-  #       run: |
-  #         helm upgrade --install migration ./deployments/helm/migration \
-  #           --namespace default \
-  #           --set migration.direction=${{ github.event.inputs.migrate }} \
-  #           --set migration.downTo=${{ github.event.inputs.down_to }} \
-  #           --wait --timeout 5m
-  #
-  #     - name: Show migration job logs
-  #       if: always()
-  #       run: |
-  #         JOB=$(kubectl get jobs -n default -l app=migration --sort-by=.metadata.creationTimestamp | tail -1 | awk '{print $1}')
-  #         if [ ! -z "$JOB" ]; then
-  #           echo "📋 Migration job: $JOB"
-  #           kubectl logs job/$JOB -n default --tail=100 || true
-  #         fi
+  migrate:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: "latest"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "latest"
+
+      - name: Load kubeconfig
+        run: |
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > kubeconfig
+          export KUBECONFIG=./kubeconfig
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Helm upgrade migration
+        run: |
+          helm upgrade --install migration ./deployments/helm/migration \
+            --namespace scaffold \
+            --set migration.image.repository=${{ secrets.DOCKERHUB_USERNAME }}/scaffold-migration \
+            --set migration.dir=/migrations \
+            --set database.host=${{ secrets.POSTGRES_HOST }} \
+            --set database.port=${{ secrets.POSTGRES_PORT }} \
+            --set database.user=${{ secrets.POSTGRES_USER }} \
+            --set database.password=${{ secrets.POSTGRES_PASSWORD }} \
+            --set database.name=${{ secrets.POSTGRES_DB }} \
+            --set database.url=${{ secrets.POSTGRES_URL }} \
+            --set database.admin.user=${{ secrets.POSTGRES_ADMIN_USER }} \
+            --set database.admin.password=${{ secrets.POSTGRES_ADMIN_PASSWORD }} \
+            --set migration.direction=${{ github.event.inputs.migrate }} \
+            --set migration.downTo=${{ github.event.inputs.down_to }}
+
+      - name: Show migration job logs
+        if: always()
+        run: |
+          JOB=$(kubectl get jobs -n scaffold -l app=migration --sort-by=.metadata.creationTimestamp | tail -1 | awk '{print $1}')
+          if [ ! -z "$JOB" ]; then
+            echo "Migration job: $JOB"
+            kubectl logs job/$JOB -n scaffold --tail=100 || true
+          fi
