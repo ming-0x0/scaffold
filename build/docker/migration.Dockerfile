@@ -7,4 +7,3 @@ RUN curl -fsSL \
     sh
 
 COPY --link internal/infra/db/migrations /migrations
-

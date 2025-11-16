@@ -1,4 +1,4 @@
-CREATE ROLE scaffold WITH LOGIN PASSWORD 'password';
+CREATE ROLE scaffold WITH LOGIN PASSWORD 'scaffold';
 CREATE DATABASE scaffold
     WITH OWNER scaffold
     ENCODING 'UTF8'

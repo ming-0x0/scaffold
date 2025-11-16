@@ -25,7 +25,7 @@ func NewPostgreSQLDB(
 
 	config := &pgdriver.Config{
 		Network: "tcp",
-		Addr:    fmt.Sprintf("%s:%d", env.GetString("DB_HOST", "localhost"), env.GetInt("DB_PORT", 30032)),
+		Addr:    fmt.Sprintf("%s:%d", env.GetString("DB_HOST", "localhost"), env.GetInt("DB_PORT", 5432)),
 		Dialer: func(ctx context.Context, network string, addr string) (net.Conn, error) {
 			return net.Dial(network, addr)
 		},

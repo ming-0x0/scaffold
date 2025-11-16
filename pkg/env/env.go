@@ -29,6 +29,22 @@ func GetEnv() Env {
 	}
 }
 
+func (e Env) IsLocal() bool {
+	return e == Local
+}
+
+func (e Env) IsDev() bool {
+	return e == Dev
+}
+
+func (e Env) IsStg() bool {
+	return e == Stg
+}
+
+func (e Env) IsProd() bool {
+	return e == Prod
+}
+
 func GetString(key string, fallback string) string {
 	value := os.Getenv(key)
 	if value == "" {

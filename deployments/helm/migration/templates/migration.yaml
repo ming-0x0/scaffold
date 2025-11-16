@@ -5,17 +5,19 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "migration.labels" . | nindent 4 }}
+type: Opaque
 data:
-  POSTGRES_USER: {{ b64enc .Values.database.admin.user }}
-  POSTGRES_PASSWORD: {{ b64enc .Values.database.admin.password }}
-  POSTGRES_DB: {{ b64enc .Values.database.name }}
-  DB_USER: {{ b64enc .Values.database.user }}
-  DB_PASSWORD: {{ b64enc .Values.database.password }}
-  DB_NAME: {{ b64enc .Values.database.name }}
-  DATABASE_URL: {{ b64enc .Values.database.url }}
+  DATABASE_URL: {{ .Values.database.url | b64enc | quote }}
+  MIGRATION_DIR: {{ .Values.migration.dir | b64enc | quote }}
+  PG_HOST: {{ .Values.database.host | b64enc | quote }}
+  PG_PORT: {{ .Values.database.port | b64enc | quote }}
+  PG_ADMIN_USER: {{ .Values.database.admin.user | b64enc | quote }}
+  PG_ADMIN_PASSWORD: {{ .Values.database.admin.password | b64enc | quote }}
+  DB_USER: {{ .Values.database.user | b64enc | quote }}
+  DB_PASSWORD: {{ .Values.database.password | b64enc | quote }}
+  DB_NAME: {{ .Values.database.name | b64enc | quote }}
 
 ---
-
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -34,23 +36,50 @@ spec:
           imagePullPolicy: {{ .Values.migration.image.pullPolicy }}
           env:
             - name: DATABASE_URL
-              value: "{{ .Values.database.url }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "migration.fullname" . }}-secret
+                  key: DATABASE_URL
             - name: MIGRATION_DIR
-              value: "{{ .Values.migration.dir }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "migration.fullname" . }}-secret
+                  key: MIGRATION_DIR
             - name: PG_HOST
-              value: "{{ .Values.database.host }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "migration.fullname" . }}-secret
+                  key: PG_HOST
             - name: PG_PORT
-              value: "{{ .Values.database.port }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "migration.fullname" . }}-secret
+                  key: PG_PORT
             - name: PG_ADMIN_USER
-              value: "{{ .Values.database.admin.user }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "migration.fullname" . }}-secret
+                  key: PG_ADMIN_USER
             - name: PG_ADMIN_PASSWORD
-              value: "{{ .Values.database.admin.password }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "migration.fullname" . }}-secret
+                  key: PG_ADMIN_PASSWORD
             - name: DB_USER
-              value: "{{ .Values.database.user }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "migration.fullname" . }}-secret
+                  key: DB_USER
             - name: DB_PASSWORD
-              value: "{{ .Values.database.password }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "migration.fullname" . }}-secret
+                  key: DB_PASSWORD
             - name: DB_NAME
-              value: "{{ .Values.database.name }}"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "migration.fullname" . }}-secret
+                  key: DB_NAME
 
           command:
             - sh

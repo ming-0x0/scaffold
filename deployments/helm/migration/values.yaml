@@ -4,8 +4,8 @@ migration:
     tag: latest
     pullPolicy: IfNotPresent
   dir: xxxxx
-  direction: up
-  downTo: ""
+  direction: xxxxx
+  downTo: xxxxx
 
 database:
   host: xxxxx
@@ -13,8 +13,7 @@ database:
   user: xxxxx
   password: xxxxx
   name: xxxxx
-
+  url: xxxxx
   admin:
     user: xxxxx
     password: xxxxx
-  url: xxxxx

@@ -33,7 +33,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=${DB_PASS}
     volumes:
-      - postgresql_data:/var/lib/postgresql/data
+      - postgresql_data:/var/lib/postgresql
       - ./build/docker/local/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]

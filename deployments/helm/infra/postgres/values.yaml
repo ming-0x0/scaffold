@@ -1,4 +1,4 @@
 postgres:
-  user: postgres # DB user
-  password: postgres # DB password
-  db: postgres # DB name
+  user: xxxxx
+  password: xxxxx
+  db: xxxxx
