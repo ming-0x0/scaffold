@@ -110,6 +110,8 @@ jobs:
 
       - name: Show migration job logs
         if: always()
+        env:
+          KUBECONFIG: ./kubeconfig
         run: |
           JOB=$(kubectl get jobs -n scaffold -l app=migration --sort-by=.metadata.creationTimestamp | tail -1 | awk '{print $1}')
           if [ ! -z "$JOB" ]; then
