@@ -1,0 +1,54 @@
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    env_file:
+      - ./.env
+    environment:
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - scaffold
+
+  postgresql:
+    image: postgres:18-alpine
+    container_name: postgresql
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT}:5432"
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASS}
+    volumes:
+      - postgresql_data:/var/lib/postgresql
+      - ./build/docker/local/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - scaffold
+
+networks:
+  scaffold:
+    driver: bridge
+
+volumes:
+  minio_data:
+    driver: local
+  postgresql_data:
+    driver: local

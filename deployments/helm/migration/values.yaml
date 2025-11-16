@@ -1,0 +1,19 @@
+migration:
+  image:
+    repository: xxxxx
+    tag: latest
+    pullPolicy: IfNotPresent
+  dir: xxxxx
+  direction: xxxxx
+  downTo: xxxxx
+
+database:
+  host: xxxxx
+  port: xxxxx
+  user: xxxxx
+  password: xxxxx
+  name: xxxxx
+  url: xxxxx
+  admin:
+    user: xxxxx
+    password: xxxxx

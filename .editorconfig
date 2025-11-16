@@ -19,7 +19,7 @@ trim_trailing_whitespace = false
 
 eclint_indent_style = unset
 
-[Dockerfile]
+[*.Dockerfile]
 indent_size = 4
 
 [*.yml,*.yaml]

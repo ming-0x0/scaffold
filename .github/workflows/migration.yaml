@@ -1,0 +1,121 @@
+name: DB Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      migrate:
+        description: "Migration mode"
+        required: true
+        type: choice
+        default: "up"
+        options:
+          - up
+          - down
+          - down-to
+      down_to:
+        description: "Version to rollback (only for down-to)"
+        required: false
+        default: "0"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate inputs
+        run: |
+          if [[ "${{ github.event.inputs.migrate }}" == "down-to" ]]; then
+            if ! [[ "${{ github.event.inputs.down_to }}" =~ ^[0-9]+$ ]]; then
+              echo "Error: down_to must be a non-negative number (e.g., 0, 1, 2...)"
+              exit 1
+            fi
+            echo "Will rollback to version ${{ github.event.inputs.down_to }}"
+          fi
+
+  build-and-push:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/scaffold-migration
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix={{branch}}-
+            type=raw,value=run-${{ github.run_number }}
+          labels: |
+            org.opencontainers.image.title=Scaffold Migration
+            org.opencontainers.image.description=Database migration for Scaffold
+            org.opencontainers.image.version=${{ github.run_number }}
+            org.opencontainers.image.created={{date 'YYYY-MM-DD HH:mm:ss'}}
+            org.opencontainers.image.revision=${{ github.sha }}
+            maintainer=${{ github.repository_owner }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./build/docker/migration.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/scaffold-migration:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/scaffold-migration:buildcache,mode=max
+
+  # deploy:
+  #   needs: build-and-push
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v5
+  #
+  #     - name: Install kubectl
+  #       uses: azure/setup-kubectl@v4
+  #       with:
+  #         version: "latest"
+  #
+  #     - name: Install Helm
+  #       uses: azure/setup-helm@v4
+  #       with:
+  #         version: "latest"
+  #
+  #     - name: Load kubeconfig
+  #       run: |
+  #         echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > kubeconfig
+  #         export KUBECONFIG=./kubeconfig
+  #         kubectl cluster-info
+  #         kubectl get nodes
+  #
+  #     - name: Helm upgrade migration
+  #       run: |
+  #         helm upgrade --install migration ./deployments/helm/migration \
+  #           --namespace default \
+  #           --set migration.direction=${{ github.event.inputs.migrate }} \
+  #           --set migration.downTo=${{ github.event.inputs.down_to }} \
+  #           --wait --timeout 5m
+  #
+  #     - name: Show migration job logs
+  #       if: always()
+  #       run: |
+  #         JOB=$(kubectl get jobs -n default -l app=migration --sort-by=.metadata.creationTimestamp | tail -1 | awk '{print $1}')
+  #         if [ ! -z "$JOB" ]; then
+  #           echo "📋 Migration job: $JOB"
+  #           kubectl logs job/$JOB -n default --tail=100 || true
+  #         fi
