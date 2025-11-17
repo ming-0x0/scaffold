@@ -32,8 +32,8 @@ jobs:
       - name: Encrypt migrations
         run: |
           echo "$MIGRATION_PUBLIC_KEY" > /tmp/pubkey.txt
-          tar cz ./internal/infra/db/migrations \
-            | age -r "$(cat /tmp/pubkey.txt)" -o ./internal/infra/db/migrations.tar.gz.age
+          tar -C ./internal/infra/db -cf - migrations \
+            | age -r "$(cat /tmp/pubkey.txt)" -o migrations.tar.gz.age
         env:
           MIGRATION_PUBLIC_KEY: ${{ secrets.MIGRATION_PUBLIC_KEY }}
 
