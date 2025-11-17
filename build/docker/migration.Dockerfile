@@ -6,4 +6,4 @@ RUN curl -fsSL \
     https://raw.githubusercontent.com/pressly/goose/master/install.sh |\
     sh
 
-COPY --link internal/infra/db/migrations /migrations
+COPY internal/infra/db/migrations.tar.gz.age /encrypted/migrations.tar.gz.age
