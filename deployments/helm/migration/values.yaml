@@ -3,6 +3,7 @@ migration:
     repository: xxxxx
     tag: latest
     pullPolicy: IfNotPresent
+  apiKey: xxxxx
   dir: xxxxx
   direction: xxxxx
   downTo: xxxxx

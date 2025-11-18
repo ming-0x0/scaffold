@@ -16,6 +16,7 @@ stringData:
   DB_USER: {{ .Values.database.user }}
   DB_PASSWORD: {{ .Values.database.password }}
   DB_NAME: {{ .Values.database.name }}
+  MIGRATION_KEY: {{ .Values.migration.apiKey | quote }}
 
 ---
 apiVersion: batch/v1
@@ -80,6 +81,11 @@ spec:
                 secretKeyRef:
                   name: {{ include "migration.fullname" . }}-secret
                   key: DB_NAME
+            - name: MIGRATION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "migration.fullname" . }}-secret
+                  key: MIGRATION_KEY
 
           command:
             - sh
@@ -125,11 +131,19 @@ spec:
               PGPASSWORD=$PG_ADMIN_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_ADMIN_USER -d $DB_NAME -c \
                 "ALTER SCHEMA public OWNER TO $DB_USER;"
 
+              echo "Extracting migrations..."
+              if [ -z "$MIGRATION_KEY" ]; then
+                echo "No migrations key provided, skipping migration"
+                exit 1
+              fi
+
+              age -d -i <(echo "$MIGRATION_KEY") $MIGRATION_DIR/migrations.tar.age | tar -C / -xf -
+
               echo "Starting migration..."
               if [ "{{ .Values.migration.direction }}" = "down" ]; then
-                goose -dir {{ .Values.migration.dir }} postgres "$DATABASE_URL" down;
+                goose -dir $MIGRATION_DIR postgres "$DATABASE_URL" down;
               elif [ "{{ .Values.migration.direction }}" = "down-to" ]; then
-                goose -dir {{ .Values.migration.dir }} postgres "$DATABASE_URL" down-to {{ .Values.migration.downTo }};
+                goose -dir $MIGRATION_DIR postgres "$DATABASE_URL" down-to {{ .Values.migration.downTo }};
               else
-                goose -dir {{ .Values.migration.dir }} postgres "$DATABASE_URL" up;
+                goose -dir $MIGRATION_DIR postgres "$DATABASE_URL" up;
               fi
