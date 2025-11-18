@@ -76,74 +76,75 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/scaffold-migration:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/scaffold-migration:buildcache,mode=max
 
-  # migrate:
-  #   needs: build-and-push
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v5
+  migrate:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
 
-  #     - name: Install kubectl
-  #       uses: azure/setup-kubectl@v4
-  #       with:
-  #         version: "latest"
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: "latest"
 
-  #     - name: Install Helm
-  #       uses: azure/setup-helm@v4
-  #       with:
-  #         version: "latest"
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "latest"
 
-  #     - name: Load kubeconfig
-  #       run: |
-  #         echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > kubeconfig
-  #         export KUBECONFIG=./kubeconfig
-  #         kubectl cluster-info
-  #         kubectl get nodes
+      - name: Load kubeconfig
+        run: |
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > kubeconfig
+          export KUBECONFIG=./kubeconfig
+          kubectl cluster-info
+          kubectl get nodes
 
-  #     - name: Helm upgrade migration
-  #       env:
-  #         KUBECONFIG: ./kubeconfig
-  #       run: |
-  #         helm upgrade --install migration ./deployments/helm/migration \
-  #           --namespace scaffold \
-  #           --set migration.image.repository=${{ secrets.DOCKERHUB_USERNAME }}/scaffold-migration \
-  #           --set migration.dir=/migrations \
-  #           --set database.host=${{ secrets.POSTGRES_HOST }} \
-  #           --set database.port=${{ secrets.POSTGRES_PORT }} \
-  #           --set database.user=${{ secrets.POSTGRES_USER }} \
-  #           --set database.password=${{ secrets.POSTGRES_PASSWORD }} \
-  #           --set database.name=${{ secrets.POSTGRES_DB }} \
-  #           --set database.url=${{ secrets.POSTGRES_URL }} \
-  #           --set database.admin.user=${{ secrets.POSTGRES_ADMIN_USER }} \
-  #           --set database.admin.password=${{ secrets.POSTGRES_ADMIN_PASSWORD }} \
-  #           --set migration.direction=${{ github.event.inputs.migrate }} \
-  #           --set migration.downTo=${{ github.event.inputs.down_to }}
+      - name: Helm upgrade migration
+        env:
+          KUBECONFIG: ./kubeconfig
+        run: |
+          helm upgrade --install migration ./deployments/helm/migration \
+            --namespace scaffold \
+            --set migration.image.repository=${{ secrets.DOCKERHUB_USERNAME }}/scaffold-migration \
+            --set migration.apiKey=${{ secrets.MIGRATION_API_KEY }} \
+            --set migration.dir=/migrations \
+            --set database.host=${{ secrets.POSTGRES_HOST }} \
+            --set database.port=${{ secrets.POSTGRES_PORT }} \
+            --set database.user=${{ secrets.POSTGRES_USER }} \
+            --set database.password=${{ secrets.POSTGRES_PASSWORD }} \
+            --set database.name=${{ secrets.POSTGRES_DB }} \
+            --set database.url=${{ secrets.POSTGRES_URL }} \
+            --set database.admin.user=${{ secrets.POSTGRES_ADMIN_USER }} \
+            --set database.admin.password=${{ secrets.POSTGRES_ADMIN_PASSWORD }} \
+            --set migration.direction=${{ github.event.inputs.migrate }} \
+            --set migration.downTo=${{ github.event.inputs.down_to }}
 
-  #     - name: Show migration job logs
-  #       if: always()
-  #       env:
-  #         KUBECONFIG: ./kubeconfig
-  #       run: |
-  #         NAMESPACE=scaffold
+      - name: Show migration job logs
+        if: always()
+        env:
+          KUBECONFIG: ./kubeconfig
+        run: |
+          NAMESPACE=scaffold
 
-  #         JOB=$(kubectl get jobs -n $NAMESPACE \
-  #           --sort-by=.metadata.creationTimestamp \
-  #           -o jsonpath="{.items[-1].metadata.name}")
+          JOB=$(kubectl get jobs -n $NAMESPACE \
+            --sort-by=.metadata.creationTimestamp \
+            -o jsonpath="{.items[-1].metadata.name}")
 
-  #         if [ -z "$JOB" ]; then
-  #           echo "No migration job found"
-  #           exit 1
-  #         fi
+          if [ -z "$JOB" ]; then
+            echo "No migration job found"
+            exit 1
+          fi
 
-  #         POD=$(kubectl get pods -n $NAMESPACE \
-  #           -l job-name=$JOB \
-  #           -o jsonpath="{.items[0].metadata.name}")
+          POD=$(kubectl get pods -n $NAMESPACE \
+            -l job-name=$JOB \
+            -o jsonpath="{.items[0].metadata.name}")
 
-  #         if [ -z "$POD" ]; then
-  #           echo "No pod found for job $JOB"
-  #           exit 1
-  #         fi
+          if [ -z "$POD" ]; then
+            echo "No pod found for job $JOB"
+            exit 1
+          fi
 
-  #         echo "Migration Pod: $POD"
-  #         echo "------ LOGS ------"
-  #         kubectl logs -n $NAMESPACE "$POD" --tail=200 || true
+          echo "Migration Pod: $POD"
+          echo "------ LOGS ------"
+          kubectl logs -n $NAMESPACE "$POD" --tail=200 || true
