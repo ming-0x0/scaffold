@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
-	"net"
 	"time"
 
 	sloglogger "github.com/ming-0x0/scaffold/internal/infra/logger/slog"
@@ -24,11 +23,8 @@ func NewPostgreSQLDB(
 	logger.InfoContext(ctx, "Opening the PostgreSQL DB connection pool")
 
 	config := &pgdriver.Config{
-		Network: "tcp",
-		Addr:    fmt.Sprintf("%s:%d", env.GetString("DB_HOST", "localhost"), env.GetInt("DB_PORT", 5432)),
-		Dialer: func(ctx context.Context, network string, addr string) (net.Conn, error) {
-			return net.Dial(network, addr)
-		},
+		Network:  "tcp",
+		Addr:     fmt.Sprintf("%s:%d", env.GetString("DB_HOST", "localhost"), env.GetInt("DB_PORT", 5432)),
 		User:     env.GetString("DB_USER", "postgres"),
 		Password: env.GetString("DB_PASS", "postgres"),
 		Database: env.GetString("DB_NAME", "postgres"),

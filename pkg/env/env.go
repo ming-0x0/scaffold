@@ -1,6 +1,8 @@
 package env
 
 import (
+	"fmt"
+	"log/slog"
 	"os"
 	"strconv"
 )
@@ -48,6 +50,7 @@ func (e Env) IsProd() bool {
 func GetString(key string, fallback string) string {
 	value := os.Getenv(key)
 	if value == "" {
+		slog.Warn(fmt.Sprintf("key %s not found, using fallback %s", key, fallback))
 		return fallback
 	}
 
@@ -57,11 +60,13 @@ func GetString(key string, fallback string) string {
 func GetInt(key string, fallback int) int {
 	value := os.Getenv(key)
 	if value == "" {
+		slog.Warn(fmt.Sprintf("key %s not found, using fallback %d", key, fallback))
 		return fallback
 	}
 
 	i, err := strconv.Atoi(value)
 	if err != nil {
+		slog.Warn(fmt.Sprintf("key %s not found, using fallback %d", key, fallback))
 		return fallback
 	}
 
@@ -71,11 +76,13 @@ func GetInt(key string, fallback int) int {
 func GetBool(key string, fallback bool) bool {
 	value := os.Getenv(key)
 	if value == "" {
+		slog.Warn(fmt.Sprintf("key %s not found, using fallback %t", key, fallback))
 		return fallback
 	}
 
 	b, err := strconv.ParseBool(value)
 	if err != nil {
+		slog.Warn(fmt.Sprintf("key %s not found, using fallback %t", key, fallback))
 		return fallback
 	}
 
